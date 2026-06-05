@@ -1,0 +1,386 @@
+\documentclass[12pt,a4paper]{report}
+
+% ─── PACKAGES ───────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{fancyhdr}
+\usepackage{mdframed}
+\usepackage{hyperref}
+\usepackage{tocloft}
+
+\geometry{
+	a4paper,
+	top=2.5cm, bottom=2.5cm,
+	left=3cm, right=2.5cm
+}
+
+\onehalfspacing
+
+% ─── COULEURS ───────────────────────────────────────────────
+\definecolor{bleuPrincipal}{RGB}{20, 55, 105}
+\definecolor{bleuClair}{RGB}{220, 235, 250}
+\definecolor{vertFonce}{RGB}{15, 100, 70}
+\definecolor{grisTexte}{RGB}{80, 80, 90}
+\definecolor{ambre}{RGB}{186, 117, 23}
+
+% ─── EN-TÊTES ───────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{bleuPrincipal}{\textit{Sommaire}}}
+\fancyhead[R]{\small\textcolor{bleuPrincipal}{PFE Licence 3 -- 2025/2026}}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{%
+	\hbox to\headwidth{%
+		\color{bleuPrincipal}\leaders\hrule height\headrulewidth\hfill}}
+
+% ─── STYLE TABLE DES MATIÈRES ───────────────────────────────
+
+% Titre du sommaire
+\renewcommand{\contentsname}{Sommaire}
+
+% Style chapitre dans le sommaire
+\renewcommand{\cftchapfont}{\bfseries\color{bleuPrincipal}}
+\renewcommand{\cftchappagefont}{\bfseries\color{bleuPrincipal}}
+\renewcommand{\cftchapleader}{\color{bleuPrincipal}\cftdotfill{\cftdotsep}}
+\setlength{\cftbeforechapskip}{10pt}
+
+% Style section dans le sommaire
+\renewcommand{\cftsecfont}{\color{grisTexte}}
+\renewcommand{\cftsecpagefont}{\color{grisTexte}}
+\renewcommand{\cftsecleader}{\color{grisTexte}\cftdotfill{\cftdotsep}}
+\setlength{\cftbeforesecskip}{3pt}
+\setlength{\cftsecindent}{1.5em}
+
+% Style sous-section dans le sommaire
+\renewcommand{\cftsubsecfont}{\small\color{grisTexte}}
+\renewcommand{\cftsubsecpagefont}{\small\color{grisTexte}}
+\setlength{\cftsubsecindent}{3em}
+\setlength{\cftbeforesubsecskip}{2pt}
+
+% ─── FORMAT CHAPITRES ───────────────────────────────────────
+\titleformat{\chapter}[display]
+{\normalfont\Large\bfseries\color{bleuPrincipal}}
+{}{0pt}{\Huge}
+[\vspace{0.3em}{\color{bleuPrincipal}\hrule height 1.5pt}\vspace{0.5em}]
+
+% ════════════════════════════════════════════════════════════
+\begin{document}
+	\pagenumbering{roman}
+	
+	% ════════════════════════════════════════════════════════════
+	%  SOMMAIRE
+	% ════════════════════════════════════════════════════════════
+	\chapter*{Sommaire}
+	\addcontentsline{toc}{chapter}{Sommaire}
+	
+	\vspace{0.5cm}
+	
+	% ── Éléments liminaires ──────────────────────────────────────
+	{
+		\noindent\textcolor{bleuPrincipal}{\rule{\linewidth}{0.8pt}}
+		\vspace{2pt}
+		
+		\noindent{\small\textit{\'El\'ements liminaires}}
+		
+		\vspace{4pt}
+		\noindent\textcolor{bleuPrincipal}{\rule{\linewidth}{0.4pt}}
+	}
+	
+	\vspace{4pt}
+	
+	\begin{list}{}{%
+			\setlength{\leftmargin}{0pt}
+			\setlength{\itemsep}{4pt}
+		}
+		\item \hspace{0pt} Page de garde \dotfill \textit{i}
+		\item \hspace{0pt} D\'edicaces \dotfill \textit{i}
+		\item \hspace{0pt} Remerciements \dotfill \textit{ii}
+		\item \hspace{0pt} R\'esum\'e \dotfill \textit{iii}
+		\item \hspace{0pt} Abstract \dotfill \textit{iv}
+		\item \hspace{0pt} Liste des figures \dotfill \textit{v}
+		\item \hspace{0pt} Liste des tableaux \dotfill \textit{vi}
+		\item \hspace{0pt} Liste des abr\'eviations \dotfill \textit{vii}
+	\end{list}
+	
+	\vspace{0.6cm}
+	
+	% ════════════════════════════════════════════════════════════
+	% INTRODUCTION GÉNÉRALE
+	% ════════════════════════════════════════════════════════════
+	
+	\noindent
+	\colorbox{bleuPrincipal}{%
+		\parbox{\linewidth}{%
+			\vspace{3pt}
+			\hspace{6pt}{\color{white}\bfseries Introduction G\'en\'erale}%
+			\hfill{\color{white}\bfseries }
+			\vspace{3pt}
+		}%
+	}
+	
+	\vspace{3pt}
+	\begin{list}{}{%
+			\setlength{\leftmargin}{1.5em}
+			\setlength{\itemsep}{2pt}
+		}
+		\item1. Contexte g\'en\'eral  
+		\item 2. Probl\'ematique  
+		\item 3. Objectifs du travail  
+		\item 4. Motivation et int\'er\^et du sujet 
+		\item 5. M\'ethodologie adopt\'ee 
+		\item 6. Structure du m\'emoire 
+	\end{list}
+	
+	\vspace{0.8cm}
+	
+	% ════════════════════════════════════════════════════════════
+	% CHAPITRE 1
+	% ════════════════════════════════════════════════════════════
+	
+	\noindent
+	\colorbox{bleuPrincipal}{%
+		\parbox{\linewidth}{%
+			\vspace{3pt}
+			\hspace{6pt}{\color{white}\bfseries Chapitre 1 \quad Travaux existants}%
+			\hfill{\color{white}\bfseries }
+			\vspace{3pt}
+		}%
+	}
+	
+	\vspace{3pt}
+	\begin{list}{}{%
+			\setlength{\leftmargin}{0pt}
+			\setlength{\itemsep}{2pt}
+		}
+		\item \textbf{Introduction} \dotfill 
+		
+		\vspace{4pt}
+		\item \textbf{1.1} \quad Agriculture de pr\'ecision et suivi parcellaire \dotfill 
+		
+		\vspace{4pt}
+		\item \textbf{1.2} \quad Donn\'ees agricoles : nature et h\'et\'erog\'en\'eit\'e \dotfill 
+		
+		\vspace{4pt}
+		\item \textbf{1.3} \quad Intelligence artificielle appliqu\'ee \`a l'agriculture \dotfill 
+		
+		\vspace{4pt}
+		\item \textbf{1.4} \quad Analyse des solutions existantes et positionnement \dotfill 
+		
+		
+		\vspace{4pt}
+		\item \textbf{Conclusion} \dotfill 
+	\end{list}
+	
+	\vspace{0.8cm}
+	
+	% ════════════════════════════════════════════════════════════
+	% CHAPITRE 2
+	% ════════════════════════════════════════════════════════════
+	
+	\noindent
+	\colorbox{bleuPrincipal}{%
+		\parbox{\linewidth}{%
+			\vspace{3pt}
+			\hspace{6pt}{\color{white}\bfseries Chapitre 2 \quad Analyse, Conception et Mod\'elisation UML}%
+			\hfill{\color{white}\bfseries }
+			\vspace{3pt}
+		}%
+	}
+	
+	\vspace{3pt}
+	\begin{list}{}{%
+			\setlength{\leftmargin}{0pt}
+			\setlength{\itemsep}{2pt}
+		}
+		\item \textbf{Introduction} \dotfill 
+		
+		\vspace{4pt}
+		\item \textbf{2.1} \quad Analyse du probl\`eme et identification des acteurs \dotfill 
+	
+		\vspace{4pt}
+		\item \textbf{2.2} \quad Sp\'ecification des besoins \dotfill 
+		
+		
+		\vspace{4pt}
+		\item \textbf{2.3} \quad Mod\'elisation UML du syst\`eme \dotfill 
+		
+		
+		\vspace{4pt}
+		\item \textbf{2.4} \quad Architecture du cadre d\'ecisionnel \dotfill 
+		
+		
+		\vspace{4pt}
+		\item \textbf{Conclusion} \dotfill 
+	\end{list}
+	
+	\vspace{0.8cm}
+	
+	% ════════════════════════════════════════════════════════════
+	% CHAPITRE 3
+	% ════════════════════════════════════════════════════════════
+	
+	\noindent
+	\colorbox{bleuPrincipal}{%
+		\parbox{\linewidth}{%
+			\vspace{3pt}
+			\hspace{6pt}{\color{white}\bfseries Chapitre 3 \quad Impl\'ementation et D\'eveloppement}%
+			\hfill{\color{white}\bfseries }
+			\vspace{3pt}
+		}%
+	}
+	
+	\vspace{3pt}
+	\begin{list}{}{%
+			\setlength{\leftmargin}{0pt}
+			\setlength{\itemsep}{2pt}
+		}
+		\item \textbf{Introduction} \dotfill 
+		
+		\vspace{4pt}
+		\item \textbf{3.1} \quad Environnement de d\'eveloppement \dotfill 
+		
+		
+		\vspace{4pt}
+		\item \textbf{3.2} \quad Collecte et pr\'etraitement des donn\'ees \dotfill 
+		
+		
+		\vspace{4pt}
+		\item \textbf{3.3} \quad Module IA -- Irrigation \dotfill 
+	
+		
+		\vspace{4pt}
+		\item \textbf{3.4} \quad Module IA -- Fertilisation \dotfill 
+		
+		
+		\vspace{4pt}
+		\item \textbf{3.5} \quad Module IA -- D\'etection des maladies \dotfill 
+		
+		
+		\vspace{4pt}
+		\item \textbf{3.6} \quad D\'eveloppement de l'application web \dotfill 
+		
+		
+		\vspace{4pt}
+		\item \textbf{Conclusion} \dotfill 
+	\end{list}
+	
+	\vspace{0.8cm}
+	
+	% ════════════════════════════════════════════════════════════
+	% CHAPITRE 4
+	% ════════════════════════════════════════════════════════════
+	
+	\noindent
+	\colorbox{bleuPrincipal}{%
+		\parbox{\linewidth}{%
+			\vspace{3pt}
+			\hspace{6pt}{\color{white}\bfseries Chapitre 4 \quad Tests et R\'esultats}%
+			\hfill{\color{white}\bfseries }
+			\vspace{3pt}
+		}%
+	}
+	
+	\vspace{3pt}
+	\begin{list}{}{%
+			\setlength{\leftmargin}{0pt}
+			\setlength{\itemsep}{2pt}
+		}
+		\item \textbf{Introduction} \dotfill 
+		
+		\vspace{4pt}
+		\item \textbf{4.1} \quad Protocole de tests et jeux de donn\'ees \dotfill 
+	
+		\vspace{4pt}
+		\item \textbf{4.2} \quad R\'esultats du module Irrigation \dotfill 
+	
+		
+		\vspace{4pt}
+		\item \textbf{4.3} \quad R\'esultats du module Fertilisation \dotfill 
+		
+		\vspace{4pt}
+		\item \textbf{4.4} \quad R\'esultats du module D\'etection des maladies \dotfill 
+		
+		
+		\vspace{4pt}
+		\item \textbf{4.5} \quad Discussion g\'en\'erale des r\'esultats \dotfill 
+		
+		\vspace{4pt}
+		\item \textbf{4.6} \quad D\'eploiement de l'application \dotfill 
+		
+		
+		\vspace{4pt}
+		\item \textbf{Conclusion} \dotfill 
+	\end{list}
+	
+	\vspace{0.8cm}
+	
+	% ════════════════════════════════════════════════════════════
+	% CONCLUSION GÉNÉRALE
+	% ════════════════════════════════════════════════════════════
+	
+	\noindent
+	\colorbox{bleuPrincipal}{%
+		\parbox{\linewidth}{%
+			\vspace{3pt}
+			\hspace{6pt}{\color{white}\bfseries Conclusion G\'en\'erale et Perspectives}%
+			\hfill{\color{white}\bfseries }
+			\vspace{3pt}
+		}%
+	}
+	
+	\begin{list}{}{%
+			\setlength{\leftmargin}{1.5em}
+			\setlength{\itemsep}{2pt}
+		}
+		
+		\item Synthèse des travaux
+		
+		\item Limites rencontrées
+		
+		\item Perspectives d’amélioration
+		
+		\item Bibliographie
+		
+		\item Annexes
+		
+		
+	\end{list}
+	\vspace{0.8cm}
+	
+	% ════════════════════════════════════════════════════════════
+	% ÉLÉMENTS FINAUX
+	% ════════════════════════════════════════════════════════════
+	
+	\noindent
+	\colorbox{bleuPrincipal}{%
+		\parbox{\linewidth}{%
+			\vspace{3pt}
+			\hspace{6pt}{\color{white}\bfseries \'El\'ements finaux}%
+			\hfill{}
+			\vspace{3pt}
+		}%
+	}
+	
+	
+	\vspace{3pt}
+	\begin{list}{}{%
+			\setlength{\leftmargin}{0pt}
+			\setlength{\itemsep}{4pt}
+		}
+		\item Bibliographie \dotfill 
+		\item Annexe A \; -- \; Jeux de donn\'ees utilis\'es \dotfill 
+		\item Annexe B \; -- \; Codes sources principaux \dotfill 
+		\item Annexe C \; -- \; Diagrammes UML complets \dotfill 
+		\item Annexe D \; -- \; Captures d'\'ecran de l'application \dotfill 
+	\end{list}
+	
+	\vspace{0.6cm}
+	\noindent\textcolor{bleuPrincipal}{\rule{\linewidth}{0.8pt}}
+	
+\end{document}
