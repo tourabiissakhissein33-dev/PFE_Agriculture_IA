@@ -16,9 +16,9 @@
     224,
     224
   ],
-  "acc_test": 0.9848,
-  "f1_macro": 0.9803,
-  "f1_weighted": 0.9847,
+  "acc_test": 0.9857,
+  "f1_macro": 0.9816,
+  "f1_weighted": 0.9857,
   "n_train": 20242,
   "n_val": 4324,
   "n_test": 4336,
