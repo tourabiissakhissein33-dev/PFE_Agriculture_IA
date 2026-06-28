@@ -26,35 +26,60 @@ st.markdown("""
 # ── CNN chargement silencieux ─────────────────────────────────────
 @st.cache_resource
 def charger_cnn():
-    chemins = [
-        os.path.join(ROOT,"models"),
-        os.path.join(os.getcwd(),"models"),
-        "models",
+    # Nom du repo en minuscules sur Streamlit Cloud
+    REPO = "pfe_agriculture_ia"
+
+    # Tous les chemins à tester dans l'ordre
+    dossiers = [
+        f"/mount/src/{REPO}/models",                          # Streamlit Cloud EXACT
+        os.path.join(ROOT, "models"),                          # Local depuis __file__
+        os.path.join(os.getcwd(), "models"),                   # Local depuis cwd
+        "models",                                               # Relatif simple
     ]
-    for base in chemins:
-        h5 = os.path.join(base,"model_maladie_cnn.h5")
-        if not os.path.exists(h5):
-            continue
-        try:
-            import tensorflow as tf
-            model   = tf.keras.models.load_model(h5)
-            cfg     = h5.replace("model_maladie_cnn.h5","config_maladies.json")
-            classes = []
-            if os.path.exists(cfg):
-                classes = json.load(open(cfg)).get("classes",[])
-            if not classes:
-                classes = [
-                    "Arachide_Malade","Arachide_Saine",
-                    "Coton_Malade","Coton_Saine",
-                    "Mais_Malade","Mais_Saine",
-                    "Mil_Malade","Mil_Saine",
-                    "Sorgho_Malade","Sorgho_Saine",
-                ]
-            return model, classes, True
-        except Exception:
-            # Erreur silencieuse — pas de message technique à l'utilisateur
-            return None, [], False
-    return None, [], False
+
+    # Noms de fichiers à tester (h5 + keras en backup)
+    noms_modele = [
+        "model_maladie_cnn.h5",
+        "model_maladie_cnn_final.keras",
+        "cnn_tchad_ft_best.keras",
+        "cnn_tchad_best.keras",
+        "cnn_finetune_best.keras",
+        "cnn_maladie_best.keras",
+    ]
+
+    h5_trouve = None
+    for dossier in dossiers:
+        for nom in noms_modele:
+            chemin = os.path.join(dossier, nom)
+            if os.path.exists(chemin):
+                h5_trouve = chemin
+                break
+        if h5_trouve:
+            break
+
+    if h5_trouve is None:
+        return None, [], False
+
+    try:
+        import tensorflow as tf
+        model  = tf.keras.models.load_model(h5_trouve)
+        dossier_modele = os.path.dirname(h5_trouve)
+        cfg    = os.path.join(dossier_modele, "config_maladies.json")
+        classes = []
+        if os.path.exists(cfg):
+            with open(cfg) as f:
+                classes = json.load(f).get("classes", [])
+        if not classes:
+            classes = [
+                "Arachide_Malade", "Arachide_Saine",
+                "Coton_Malade",    "Coton_Saine",
+                "Mais_Malade",     "Mais_Saine",
+                "Mil_Malade",      "Mil_Saine",
+                "Sorgho_Malade",   "Sorgho_Saine",
+            ]
+        return model, classes, True
+    except Exception:
+        return None, [], False
 
 model_cnn, CLASSES, CNN_OK = charger_cnn()
 
