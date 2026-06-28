@@ -1,366 +1,402 @@
-# ══════════════════════════════════════════════════════════════════
-# pages/3_Detection_Maladies.py
-# Module Détection des Maladies — CNN MobileNetV2 + Météo Open-Meteo
-# ══════════════════════════════════════════════════════════════════
-
 import streamlit as st
 import numpy as np
 import json, os, sys
 from PIL import Image
 
 st.set_page_config(
-    page_title="Détection Maladies", page_icon="🔬", layout="wide")
+    page_title="Détection Maladies",
+    page_icon="🔬", layout="wide",
+    initial_sidebar_state="expanded")
 
-# ── Import utilitaire météo ───────────────────────────────────────
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
+from styles import GLOBAL_CSS
 from meteo_api import VILLES_TCHAD, get_meteo_actuelle, afficher_meteo_widget
 
-# ── Chargement CNN robuste ────────────────────────────────────────
+st.markdown(GLOBAL_CSS, unsafe_allow_html=True)
+st.markdown("""
+<style>
+[data-testid="stAppViewContainer"]{
+    background:linear-gradient(160deg,#fff8f0 0%,#fce4d6 50%,#fff3e0 100%);
+}
+</style>""", unsafe_allow_html=True)
+
+# ── CNN chargement silencieux ─────────────────────────────────────
 @st.cache_resource
 def charger_cnn():
     chemins = [
-        os.path.join(ROOT, "models"),
-        os.path.join(os.getcwd(), "models"),
+        os.path.join(ROOT,"models"),
+        os.path.join(os.getcwd(),"models"),
         "models",
     ]
     for base in chemins:
-        h5  = os.path.join(base, "model_maladie_cnn.h5")
-        cfg = os.path.join(base, "config_maladies.json")
+        h5 = os.path.join(base,"model_maladie_cnn.h5")
         if not os.path.exists(h5):
             continue
         try:
             import tensorflow as tf
-            model = tf.keras.models.load_model(h5)
+            model   = tf.keras.models.load_model(h5)
+            cfg     = h5.replace("model_maladie_cnn.h5","config_maladies.json")
             classes = []
             if os.path.exists(cfg):
-                with open(cfg) as f:
-                    classes = json.load(f).get("classes", [])
+                classes = json.load(open(cfg)).get("classes",[])
+            if not classes:
+                classes = [
+                    "Arachide_Malade","Arachide_Saine",
+                    "Coton_Malade","Coton_Saine",
+                    "Mais_Malade","Mais_Saine",
+                    "Mil_Malade","Mil_Saine",
+                    "Sorgho_Malade","Sorgho_Saine",
+                ]
             return model, classes, True
-        except Exception as e:
-            st.warning(f"Erreur chargement CNN : {e}")
+        except Exception:
+            # Erreur silencieuse — pas de message technique à l'utilisateur
             return None, [], False
     return None, [], False
 
 model_cnn, CLASSES, CNN_OK = charger_cnn()
 
-# ── Conseils agronomiques ─────────────────────────────────────────
 CONSEILS = {
-    "Mais_Malade":     ("🔴 MALADIE DÉTECTÉE",
-                        "Appliquer fongicide mancozèbe 2–3 kg/ha. Surveiller 7 jours.",
-                        "error"),
-    "Mais_Saine":      ("🟢 MAÏS SAIN",
-                        "Parcelle saine. Surveillance hebdomadaire recommandée.",
-                        "success"),
-    "Sorgho_Malade":   ("🔴 MALADIE DÉTECTÉE",
-                        "Fongicide foliaire recommandé. Réduire l'humidité excessive.",
-                        "error"),
-    "Sorgho_Saine":    ("🟢 SORGHO SAIN",     "Parcelle saine. Suivi normal.",          "success"),
-    "Arachide_Malade": ("🔴 MALADIE DÉTECTÉE",
-                        "Chlorothalonil 1.5 L/ha — 2 applications à 14j d'intervalle.",
-                        "error"),
-    "Arachide_Saine":  ("🟢 ARACHIDE SAINE",  "Parcelle saine. Vérifier le sol.",        "success"),
-    "Mil_Malade":      ("🔴 MALADIE DÉTECTÉE",
-                        "Métalaxyl-M + mancozèbe recommandés.",
-                        "error"),
-    "Mil_Saine":       ("🟢 MIL SAIN",        "Parcelle saine. Continuer le suivi.",     "success"),
-    "Coton_Malade":    ("🔴 MALADIE DÉTECTÉE",
-                        "Insecticide + fongicide combiné. Consulter l'ITRAD.",
-                        "error"),
-    "Coton_Saine":     ("🟢 COTON SAIN",
-                        "Parcelle saine. Surveiller les parasites.",
-                        "success"),
+    "Mais_Malade":     "Fongicide mancozèbe 2–3 kg/ha. Surveiller 7 jours.",
+    "Mais_Saine":      "Parcelle saine. Surveillance hebdomadaire.",
+    "Sorgho_Malade":   "Fongicide foliaire. Réduire l'humidité excessive.",
+    "Sorgho_Saine":    "Parcelle saine. Suivi normal.",
+    "Arachide_Malade": "Chlorothalonil 1.5 L/ha — 2 applications à 14j.",
+    "Arachide_Saine":  "Parcelle saine. Vérifier le sol.",
+    "Mil_Malade":      "Métalaxyl-M + mancozèbe recommandés.",
+    "Mil_Saine":       "Parcelle saine. Continuer le suivi.",
+    "Coton_Malade":    "Insecticide + fongicide combiné. Consulter l'ITRAD.",
+    "Coton_Saine":     "Parcelle saine. Surveiller les parasites.",
+}
+SEUILS = {
+    "Mais":{"critique":0.25,"alerte":0.40},
+    "Sorgho":{"critique":0.22,"alerte":0.38},
+    "Arachide":{"critique":0.28,"alerte":0.42},
+    "Mil":{"critique":0.20,"alerte":0.35},
+    "Coton":{"critique":0.30,"alerte":0.45},
 }
 
-# ── Diagnostic NDVI (règles agronomiques — toujours disponible) ───
-def diagnostiquer_ndvi(ndvi, culture, temperature, humidite_air, pluie_7j):
-    seuils = {
-        "Mais":    {"critique": 0.25, "alerte": 0.40},
-        "Sorgho":  {"critique": 0.22, "alerte": 0.38},
-        "Arachide":{"critique": 0.28, "alerte": 0.42},
-        "Mil":     {"critique": 0.20, "alerte": 0.35},
-        "Coton":   {"critique": 0.30, "alerte": 0.45},
-    }
-    s     = seuils.get(culture, {"critique": 0.25, "alerte": 0.40})
-    score = 0
-    raisons = []
-
-    if ndvi < s["critique"]:
-        score += 4
-        raisons.append(f"NDVI très faible ({ndvi:.2f} < {s['critique']})")
-    elif ndvi < s["alerte"]:
-        score += 2
-        raisons.append(f"NDVI faible ({ndvi:.2f} < {s['alerte']})")
-
-    if temperature > 35:
-        score += 1
-        raisons.append(f"Température élevée ({temperature}°C)")
-    if humidite_air > 75 and ndvi < 0.4:
-        score += 1
-        raisons.append("Humidité élevée → risque fongique")
-    if pluie_7j > 50 and ndvi < 0.4:
-        score += 1
-        raisons.append("Excès de pluie → risque maladie")
-
-    if score >= 4:
-        return "Malade", min(90, 60 + score * 5), raisons
-    elif score >= 2:
-        return "Stress", min(80, 50 + score * 5), raisons
-    else:
-        return "Saine", min(95, 75 + (5 - score) * 3), raisons
+def score_ndvi(ndvi, culture, temp, humid, pluie):
+    s  = SEUILS.get(culture,{"critique":0.25,"alerte":0.40})
+    sc, r = 0, []
+    if ndvi < s["critique"]:     sc+=4; r.append(f"NDVI très faible ({ndvi:.2f})")
+    elif ndvi < s["alerte"]:     sc+=2; r.append(f"NDVI faible ({ndvi:.2f})")
+    if temp > 35:                sc+=1; r.append(f"Température élevée ({temp:.0f}°C)")
+    if humid > 75 and ndvi<0.4: sc+=1; r.append("Humidité élevée → risque fongique")
+    if pluie > 50 and ndvi<0.4: sc+=1; r.append("Excès de pluie → risque maladie")
+    if sc >= 4: return "Malade", min(90,60+sc*5), r
+    if sc >= 2: return "Stress", min(80,50+sc*5), r
+    return "Saine", min(95,75+(5-sc)*3), r
 
 # ══════════════════════════════════════════════════════════════════
-# INTERFACE
+# HEADER
 # ══════════════════════════════════════════════════════════════════
+st.markdown("""
+<div class="page-header" style="background:linear-gradient(135deg,#bf360c,#e65100)">
+  <div style="font-size:2.2rem">🔬</div>
+  <div>
+    <h1>Module Détection des Maladies</h1>
+    <p>CNN MobileNetV2 (photo feuille) · NDVI Drone/Satellite · Météo temps réel</p>
+  </div>
+</div>""", unsafe_allow_html=True)
 
-st.title("🔬 Module Détection des Maladies")
-
+# Statut CNN — message propre, pas d'erreur technique
 if CNN_OK:
-    st.success(
-        "✅ Modèle CNN MobileNetV2 chargé — "
-        f"val accuracy : 96.61% | {len(CLASSES)} classes"
-    )
+    st.markdown(
+        f'<div class="status-ok">✅ Modèle CNN MobileNetV2 chargé — '
+        f'val accuracy : 96.61% | {len(CLASSES)} classes</div>',
+        unsafe_allow_html=True)
 else:
-    st.info(
-        "ℹ️ Modèle CNN non chargé. "
-        "**Mode actif : Diagnostic NDVI + données météo temps réel**"
-    )
-
-st.divider()
+    st.markdown(
+        '<div class="status-warn">📡 Mode Télédétection NDVI actif — '
+        'chargez le modèle CNN dans models/ pour activer l\'analyse photo</div>',
+        unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════
-# MÉTÉO TEMPS RÉEL
+# MÉTÉO
 # ══════════════════════════════════════════════════════════════════
+st.markdown('<div class="meteo-box">', unsafe_allow_html=True)
+st.markdown('<div class="meteo-title">🛰️ Météo en temps réel — Open-Meteo</div>',
+            unsafe_allow_html=True)
 
-st.subheader("🛰️ Conditions météo de la parcelle (Open-Meteo)")
-
-col_v1, col_v2 = st.columns([2, 1])
-with col_v1:
-    ville_sel = st.selectbox(
-        "Ville la plus proche",
-        list(VILLES_TCHAD.keys()),
-        index=0
-    )
-with col_v2:
-    btn_meteo = st.button("🔄 Charger la météo", use_container_width=True)
+vc1,vc2 = st.columns([3,1])
+with vc1:
+    ville_sel = st.selectbox("Ville",list(VILLES_TCHAD.keys()),
+                              label_visibility="collapsed")
+with vc2:
+    btn_m = st.button("🔄 Charger",use_container_width=True,
+                      type="primary")
 
 if "meteo_mal" not in st.session_state:
     st.session_state.meteo_mal = None
 if "ville_mal" not in st.session_state:
     st.session_state.ville_mal = ville_sel
 
-if btn_meteo or st.session_state.ville_mal != ville_sel:
+if btn_m or st.session_state.ville_mal != ville_sel:
     st.session_state.ville_mal = ville_sel
-    coords = VILLES_TCHAD[ville_sel]
     with st.spinner(f"Chargement météo {ville_sel}..."):
+        coords = VILLES_TCHAD[ville_sel]
         st.session_state.meteo_mal = get_meteo_actuelle(
-            coords["lat"], coords["lon"])
+            coords["lat"],coords["lon"])
 
 meteo = st.session_state.meteo_mal
-if meteo:
-    afficher_meteo_widget(meteo, ville_sel)
-
-st.divider()
-
-# ══════════════════════════════════════════════════════════════════
-# ONGLETS
-# ══════════════════════════════════════════════════════════════════
-
-if CNN_OK:
-    tab1, tab2 = st.tabs([
-        "📸 Analyse par photo (CNN MobileNetV2)",
-        "📡 Analyse NDVI (Télédétection)"
-    ])
+if meteo and meteo.get("ok"):
+    mc1,mc2,mc3,mc4,mc5 = st.columns(5)
+    mc1.metric("🌡️ Température", f"{meteo['temperature_moy']}°C")
+    mc2.metric("💧 Humidité",     f"{meteo['humidite_air']}%")
+    mc3.metric("🌧️ Pluie 7j",    f"{meteo['pluie_7j']} mm")
+    mc4.metric("💨 Vent",         f"{meteo['vent_moy']} m/s")
+    mc5.metric("☀️ ETP",          f"{meteo['etp']} mm/j")
+    st.caption(f"✅ Données temps réel · {ville_sel} · {meteo['heure_maj']}")
+elif meteo and not meteo.get("ok"):
+    st.warning(f"⚠️ {meteo.get('erreur','Météo indisponible')}")
 else:
-    tab2, = st.tabs(["📡 Analyse NDVI (Télédétection)"])
-    tab1 = None
+    st.caption("👆 Cliquez sur **Charger** pour les données météo en temps réel")
 
-# ── TAB 1 : CNN ───────────────────────────────────────────────────
-if tab1:
-    with tab1:
-        st.subheader("📸 Diagnostic par photo de feuille")
-        col_a, col_b = st.columns([1, 1])
+st.markdown('</div>', unsafe_allow_html=True)
 
-        with col_a:
-            st.info("Prenez une photo claire d'une feuille — fond neutre de préférence.")
-            photo = st.file_uploader(
-                "Charger une photo (JPG, PNG)",
-                type=["jpg","jpeg","png"],
-                key="photo_cnn"
-            )
-            culture_hint = st.selectbox(
-                "Culture (optionnel)",
-                ["Non précisé","Mais","Sorgho","Arachide","Mil","Coton"],
-                key="cult_hint"
-            )
+# Valeurs pré-remplies
+t_def  = meteo["temperature_moy"] if meteo and meteo.get("ok") else 33.0
+hu_def = meteo["humidite_air"]    if meteo and meteo.get("ok") else 45.0
+pl_def = meteo["pluie_7j"]        if meteo and meteo.get("ok") else 10.0
+
+# ══════════════════════════════════════════════════════════════════
+# ONGLETS — toujours 2 visibles
+# ══════════════════════════════════════════════════════════════════
+if CNN_OK:
+    tab_cnn, tab_ndvi = st.tabs([
+        "📸  Analyse photo (CNN MobileNetV2)",
+        "🛰️  Analyse NDVI — Drone / Satellite"])
+else:
+    # CNN non dispo : montrer les 2 onglets quand même
+    tab_cnn, tab_ndvi = st.tabs([
+        "📸  Analyse photo (CNN — en cours de chargement)",
+        "🛰️  Analyse NDVI — Drone / Satellite"])
+
+# ══════════════════════════════════════════════════════════════════
+# TAB CNN
+# ══════════════════════════════════════════════════════════════════
+with tab_cnn:
+    if not CNN_OK:
+        st.info(
+            "🔄 Le modèle CNN n'est pas encore chargé. "
+            "Placez `model_maladie_cnn.h5` dans le dossier `models/` "
+            "pour activer l'analyse par photo.\n\n"
+            "**En attendant**, utilisez l'onglet 🛰️ **NDVI** qui est "
+            "pleinement fonctionnel.")
+    else:
+        st.markdown("### 📸 Diagnostic par photo de feuille")
+        col_up, col_res = st.columns([1,1], gap="large")
+
+        with col_up:
+            st.markdown("""
+            <div class="upload-guide">
+                📷 <b>Protocole photo</b><br><br>
+                ✅ Une seule feuille isolée<br>
+                ✅ Fond blanc ou neutre<br>
+                ✅ Photo rapprochée (20–30 cm)<br>
+                ✅ Lumière naturelle, sans flash<br><br>
+                ❌ Pas de champ entier<br>
+                ❌ Pas de fond complexe
+            </div>""", unsafe_allow_html=True)
+
+            photo = st.file_uploader("📁 Charger une photo",
+                                     type=["jpg","jpeg","png"],
+                                     key="photo_cnn")
             if photo:
                 img_orig = Image.open(photo)
-                st.image(img_orig, caption="Photo originale", use_column_width=True)
+                st.image(img_orig, caption="Photo chargée",
+                         use_container_width=True)
 
-        with col_b:
+        with col_res:
             if not photo:
-                st.markdown("**👈 Chargez une photo pour commencer**")
                 st.markdown("""
-                **Cultures supportées :**
-                🌽 Maïs · 🌾 Sorgho · 🥜 Arachide · 🌾 Mil · 🌿 Coton
-                """)
+                <div style="background:white;border-radius:12px;padding:3rem;
+                     text-align:center;color:#bbb;
+                     box-shadow:0 2px 8px rgba(0,0,0,.05)">
+                    <div style="font-size:3rem;margin-bottom:.5rem">🖼️</div>
+                    <div>Chargez une photo pour lancer le diagnostic</div>
+                </div>""", unsafe_allow_html=True)
             else:
                 if st.button("🔍 Analyser la feuille", type="primary",
                              use_container_width=True, key="btn_cnn"):
-                    with st.spinner("Analyse CNN en cours..."):
-                        img_r = img_orig.convert("RGB").resize((224, 224))
-                        arr   = np.expand_dims(np.array(img_r)/255.0, axis=0)
+                    with st.spinner("Analyse CNN..."):
+                        img_r = img_orig.convert("RGB").resize((224,224))
+                        arr   = np.expand_dims(np.array(img_r)/255.0, 0)
                         preds = model_cnn.predict(arr, verbose=0)[0]
                         idx   = int(np.argmax(preds))
-                        conf  = float(preds[idx]) * 100
-                        cls   = CLASSES[idx] if CLASSES and idx < len(CLASSES) else f"Classe {idx}"
+                        conf  = float(preds[idx])*100
+                        cls   = CLASSES[idx] if idx<len(CLASSES) else f"Classe {idx}"
 
-                    titre, conseil, typ = CONSEILS.get(
-                        cls, (cls, "Consultez un agronome.", "warning"))
+                    parts   = cls.split("_")
+                    culture = parts[0] if parts else "?"
+                    etat    = parts[1] if len(parts)>1 else "?"
+                    conseil = CONSEILS.get(cls,"Consultez un agronome.")
 
-                    getattr(st, typ)(f"**{titre}**")
-                    st.metric("Confiance du modèle", f"{conf:.1f}%")
+                    style = "result-malade" if etat=="Malade" else "result-sain"
+                    icon  = "🦠" if etat=="Malade" else "✅"
 
-                    # Contexte météo
-                    if meteo and meteo["ok"]:
+                    st.markdown(
+                        f'<div class="{style}">{icon} {culture} — {etat.upper()}</div>',
+                        unsafe_allow_html=True)
+
+                    rc1,rc2 = st.columns(2)
+                    rc1.metric("Confiance", f"{conf:.1f}%")
+                    rc2.metric("Culture",   culture)
+
+                    if conf > 95:
+                        st.warning(
+                            "⚠️ Confiance très élevée — vérifiez que la photo "
+                            "montre une feuille isolée sur fond neutre.")
+
+                    if meteo and meteo.get("ok"):
                         st.info(
-                            f"📍 Conditions à {ville_sel} : "
-                            f"T°={meteo['temperature_moy']}°C · "
-                            f"Humidité={meteo['humidite_air']}% · "
-                            f"Pluie 7j={meteo['pluie_7j']}mm"
-                        )
+                            f"📍 {ville_sel} : T°={meteo['temperature_moy']}°C | "
+                            f"Humidité={meteo['humidite_air']}% | "
+                            f"Pluie={meteo['pluie_7j']}mm")
 
-                    st.info(f"**Recommandation :** {conseil}")
+                    st.markdown(
+                        f'<div class="conseil">💊 <b>Traitement :</b> {conseil}</div>',
+                        unsafe_allow_html=True)
 
-                    with st.expander("Toutes les probabilités"):
+                    with st.expander("📊 Toutes les probabilités"):
                         for i in np.argsort(preds)[::-1][:5]:
-                            c = CLASSES[i] if CLASSES and i < len(CLASSES) else f"Classe {i}"
-                            st.progress(float(preds[i]),
-                                        text=f"{c} : {preds[i]*100:.1f}%")
+                            c   = CLASSES[i] if i<len(CLASSES) else f"Classe {i}"
+                            prb = float(preds[i])
+                            clr = "#e53935" if "Malade" in c else "#27ae60"
+                            ico = "🔴" if "Malade" in c else "🟢"
+                            st.markdown(
+                                f'<div class="prob-row">'
+                                f'<span style="width:155px;font-size:.8rem">{ico} {c}</span>'
+                                f'<div class="prob-bg"><div class="prob-fill" '
+                                f'style="width:{prb*100:.1f}%;background:{clr}"></div></div>'
+                                f'<span class="prob-val">{prb*100:.1f}%</span></div>',
+                                unsafe_allow_html=True)
 
-                    st.caption(
-                        "CNN MobileNetV2 + Transfer Learning | "
-                        "PlantVillage + mais-disease | val accuracy : 96.61%"
-                    )
+# ══════════════════════════════════════════════════════════════════
+# TAB NDVI
+# ══════════════════════════════════════════════════════════════════
+with tab_ndvi:
+    st.markdown("### 🛰️ Diagnostic NDVI — Drone ou Satellite")
 
-# ── TAB 2 : NDVI ─────────────────────────────────────────────────
-with tab2:
-    st.subheader("📡 Diagnostic par indices spectraux NDVI")
-    st.markdown(
-        "Entrez les valeurs NDVI de votre parcelle "
-        "(obtenues par satellite Sentinel-2 ou drone multispectral). "
-        "Les données météo sont **pré-remplies automatiquement** si vous avez chargé la météo."
-    )
+    nd1, nd2 = st.columns([1,1], gap="large")
 
-    # Valeurs par défaut depuis la météo temps réel
-    t_def   = meteo["temperature_moy"]  if meteo and meteo["ok"] else 33.0
-    hu_def  = meteo["humidite_air"]     if meteo and meteo["ok"] else 40.0
-    pl_def  = meteo["pluie_7j"]         if meteo and meteo["ok"] else 10.0
+    with nd1:
+        st.markdown("""
+        <div class="card">
+          <div class="card-title">Sources de données NDVI</div>
+          <div style="font-size:.84rem;line-height:1.7;color:#333">
+            <b>🚁 Drone multispectral</b><br>
+            Survole la parcelle et calcule NDVI/EVI/SAVI
+            pour chaque pixel. Résolution 5–10 cm.<br>
+            <em>Apps : Pix4D, DroneDeploy, Agisoft</em>
+          </div>
+          <hr style="border:none;border-top:1px solid #f0f0f0;margin:.7rem 0">
+          <div style="font-size:.84rem;line-height:1.7;color:#333">
+            <b>🛰️ Satellite Sentinel-2 (gratuit)</b><br>
+            Couvre le Tchad tous les 5 jours. Résolution 10m.<br>
+            1. Aller sur <b>apps.sentinel-hub.com</b><br>
+            2. Chercher votre parcelle<br>
+            3. Sélectionner "NDVI" → lire la valeur
+          </div>
+          <hr style="border:none;border-top:1px solid #f0f0f0;margin:.7rem 0">
+          <div style="font-size:.84rem;line-height:1.7;color:#333">
+            <b>📱 Estimation visuelle</b><br>
+            Feuilles vertes denses → NDVI ≈ 0.65–0.80<br>
+            Feuilles pâles → NDVI ≈ 0.35–0.50<br>
+            Jaunissement → NDVI ≈ 0.15–0.30
+          </div>
+        </div>""", unsafe_allow_html=True)
 
-    col_n1, col_n2, col_n3 = st.columns(3)
+    with nd2:
+        if meteo and meteo.get("ok"):
+            st.success("✅ Valeurs météo pré-remplies depuis Open-Meteo")
 
-    with col_n1:
-        st.markdown("**📊 Indices spectraux**")
-        ndvi = st.slider("NDVI", -1.0, 1.0, 0.35, 0.01,
-                         help="< 0.3 : stress | 0.3–0.5 : modéré | > 0.5 : sain")
-        if ndvi > 0.5:
-            st.success(f"🟢 NDVI = {ndvi:.2f} — Végétation saine")
-        elif ndvi > 0.3:
-            st.warning(f"🟡 NDVI = {ndvi:.2f} — Stress modéré")
-        else:
-            st.error(f"🔴 NDVI = {ndvi:.2f} — Stress sévère")
-        evi  = st.slider("EVI",  -1.0, 1.0, 0.28, 0.01)
-        savi = st.slider("SAVI", -1.0, 1.0, 0.32, 0.01)
+        # Légende
+        st.markdown("""
+        <div class="ndvi-legend">
+          <div class="nl-r">🔴 Malade (&lt;0.3)</div>
+          <div class="nl-y">🟡 Stress (0.3–0.5)</div>
+          <div class="nl-g">🟢 Sain (&gt;0.5)</div>
+        </div>""", unsafe_allow_html=True)
 
-    with col_n2:
-        st.markdown("**🌡️ Conditions climatiques**")
-        if meteo and meteo["ok"]:
-            st.caption("✅ Pré-rempli depuis Open-Meteo")
-        temperature = st.slider(
-            "Température (°C)", 15.0, 45.0, float(t_def), 0.5)
-        humidite_nd = st.slider(
-            "Humidité de l'air (%)", 10.0, 95.0, float(hu_def), 1.0)
-        pluie_ndvi  = st.number_input(
-            "Pluie 7 derniers jours (mm)", 0.0, 300.0, float(pl_def), 1.0)
+        ndvi = st.slider("**NDVI**", -1.0, 1.0, 0.62, 0.01,
+                         help="Valeur issue du drone ou satellite")
 
-    with col_n3:
-        st.markdown("**🌾 Parcelle**")
-        culture_nd = st.selectbox(
-            "Culture", ["Mais","Sorgho","Arachide","Mil","Coton"],
-            index=0, key="cult_ndvi")
-        saison_nd  = st.selectbox(
-            "Saison",
-            ["Sèche","Début des pluies","Saison des pluies"],
-            index=2, key="sais_ndvi")
-        zone_nd    = st.selectbox(
-            "Zone",
-            ["Sahélienne","Soudanienne"],
-            index=0 if VILLES_TCHAD.get(ville_sel,{}).get("zone","Sahélienne")=="Sahélienne" else 1,
-            key="zone_ndvi")
+        if ndvi > 0.5:   st.success(f"🟢 NDVI = {ndvi:.2f} — Sain")
+        elif ndvi > 0.3: st.warning(f"🟡 NDVI = {ndvi:.2f} — Stress modéré")
+        else:            st.error(f"🔴 NDVI = {ndvi:.2f} — Stress sévère")
 
-    st.divider()
+        evi  = st.slider("**EVI**",  -1.0, 1.0, 0.50, 0.01)
+        savi = st.slider("**SAVI**", -1.0, 1.0, 0.55, 0.01,
+                         help="Adapté aux zones semi-arides (Sahel)")
 
-    if st.button("🔍 Analyser la parcelle (NDVI)", type="primary",
-                 use_container_width=True, key="btn_ndvi"):
+        st.markdown("---")
+        n1,n2 = st.columns(2)
+        with n1:
+            temperature = st.number_input("Température (°C)",
+                                          15.0,45.0,float(t_def),0.5)
+            pluie_nd = st.number_input("Pluie 7j (mm)",
+                                        0.0,300.0,float(pl_def),1.0)
+        with n2:
+            humidite_nd = st.number_input("Humidité (%)",
+                                           10.0,95.0,float(hu_def),1.0)
+            culture_nd  = st.selectbox("Culture",
+                ["Mais","Sorgho","Arachide","Mil","Coton"],
+                key="cult_nd")
 
-        niveau, confiance, raisons = diagnostiquer_ndvi(
-            ndvi, culture_nd, temperature, humidite_nd, pluie_ndvi)
+        zone_auto = VILLES_TCHAD.get(ville_sel,{}).get("zone","Sahélienne")
+        zone_nd   = st.radio("Zone",["Sahélienne","Soudanienne"],
+                              index=0 if zone_auto=="Sahélienne" else 1,
+                              horizontal=True, key="zone_nd")
 
-        col_r1, col_r2, col_r3 = st.columns(3)
+        if st.button("🔍 Analyser (NDVI)", type="primary",
+                     use_container_width=True, key="btn_ndvi"):
 
-        cls_key = f"{culture_nd}_{niveau}" if niveau in ("Malade","Saine") else None
-        if cls_key and cls_key in CONSEILS:
-            titre, conseil, typ = CONSEILS[cls_key]
-        elif niveau == "Stress":
-            titre   = "🟡 STRESS VÉGÉTATIF"
-            conseil = f"Surveillance renforcée pour {culture_nd}. Vérifier eau et nutriments."
-            typ     = "warning"
-        else:
-            titre   = f"État : {niveau}"
-            conseil = "Consultez un agronome."
-            typ     = "info"
+            niveau,conf,raisons = score_ndvi(
+                ndvi,culture_nd,temperature,humidite_nd,pluie_nd)
 
-        with col_r1:
-            getattr(st, typ)(f"**{titre}**")
-        with col_r2:
-            st.metric("Confiance", f"{confiance:.0f}%")
-            st.metric("Culture",   culture_nd)
-        with col_r3:
-            st.metric("NDVI",      f"{ndvi:.3f}")
-            st.metric("Zone",      zone_nd)
+            cls_key = f"{culture_nd}_{niveau}"
+            conseil = CONSEILS.get(
+                cls_key,
+                "Surveillance renforcée recommandée."
+                if niveau=="Stress" else "Consultez un agronome.")
 
-        st.info(f"**Recommandation :** {conseil}")
+            style = ("result-malade" if niveau=="Malade"
+                     else "result-sain" if niveau=="Saine"
+                     else "result-stress")
+            icon  = "🦠" if niveau=="Malade" else ("✅" if niveau=="Saine" else "⚠️")
 
-        if raisons:
-            with st.expander("🔍 Facteurs identifiés"):
-                for r in raisons:
-                    st.markdown(f"- {r}")
+            st.markdown(
+                f'<div class="{style}">{icon} {culture_nd} — {niveau.upper()}</div>',
+                unsafe_allow_html=True)
 
-        if meteo and meteo["ok"]:
-            st.success(
-                f"📍 Météo temps réel ({ville_sel}) intégrée dans l'analyse — "
-                f"T°={temperature}°C · Humidité={humidite_nd}% · "
-                f"Pluie 7j={pluie_ndvi}mm"
-            )
+            nr1,nr2,nr3 = st.columns(3)
+            nr1.metric("Confiance", f"{conf:.0f}%")
+            nr2.metric("NDVI",      f"{ndvi:.3f}")
+            nr3.metric("Zone",      zone_nd)
 
-        with st.expander("📊 Interprétation des indices"):
-            c1, c2, c3 = st.columns(3)
-            c1.metric("NDVI", f"{ndvi:.3f}",
-                      "Sain" if ndvi > 0.5 else ("Modéré" if ndvi > 0.3 else "Critique"))
-            c2.metric("EVI",  f"{evi:.3f}")
-            c3.metric("SAVI", f"{savi:.3f}")
-            st.markdown("""
-| Indice | Valeur | Interprétation |
-|--------|--------|----------------|
-| NDVI > 0.5 | Dense | Plante saine |
-| NDVI 0.3–0.5 | Modéré | Stress possible |
-| NDVI < 0.3 | Faible | Maladie / stress sévère |
-""")
+            st.markdown(
+                f'<div class="conseil">💊 <b>Traitement :</b> {conseil}</div>',
+                unsafe_allow_html=True)
+
+            if raisons:
+                with st.expander("🔍 Facteurs de risque"):
+                    for r in raisons:
+                        st.markdown(f"• {r}")
+
+            with st.expander("📋 Seuils NDVI par culture"):
+                st.markdown("""
+<table class="data-table">
+<tr><th>Culture</th><th>🔴 Malade</th><th>🟡 Stress</th><th>🟢 Sain</th></tr>
+<tr><td>🌽 Maïs</td><td>&lt;0.25</td><td>0.25–0.40</td><td>&gt;0.40</td></tr>
+<tr><td>🌾 Sorgho</td><td>&lt;0.22</td><td>0.22–0.38</td><td>&gt;0.38</td></tr>
+<tr><td>🥜 Arachide</td><td>&lt;0.28</td><td>0.28–0.42</td><td>&gt;0.42</td></tr>
+<tr><td>🌾 Mil</td><td>&lt;0.20</td><td>0.20–0.35</td><td>&gt;0.35</td></tr>
+<tr><td>🌿 Coton</td><td>&lt;0.30</td><td>0.30–0.45</td><td>&gt;0.45</td></tr>
+</table>""", unsafe_allow_html=True)
 
 st.divider()
-st.warning(
-    "⚠️ Outil d'aide à la décision. "
-    "En cas de doute, consultez un agronome ou l'**ITRAD**."
-)
+st.warning("⚠️ Outil d'aide à la décision. En cas de doute, consultez un agronome ou l'**ITRAD**.")
