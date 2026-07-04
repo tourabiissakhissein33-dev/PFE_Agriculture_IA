@@ -1,0 +1,20 @@
+{
+  "classes": [
+    "Arachide_Malade",
+    "Arachide_Saine",
+    "Coton_Malade",
+    "Coton_Saine",
+    "Mais_Malade",
+    "Mais_Saine",
+    "Mil_Malade",
+    "Mil_Saine",
+    "Sorgho_Malade",
+    "Sorgho_Saine"
+  ],
+  "n_classes": 10,
+  "img_size": [
+    224,
+    224
+  ],
+  "accuracy": 0.6512
+}
