@@ -18,39 +18,7 @@ st.markdown("""<style>
 .ndvi-result{font-size:2rem;font-weight:900;text-align:center;padding:1rem;border-radius:12px;margin:.5rem 0}
 </style>""",unsafe_allow_html=True)
 
-content = open("pages/3_Detection_Maladies.py").read()
-
-old = """@st.cache_resource
-def charger_cnn():
-    dossiers=["/mount/src/pfe_agriculture_ia/models",
-              os.path.join(ROOT,"models"),os.path.join(os.getcwd(),"models"),"models"]
-    noms=["model_maladie.tflite","model_maladie_cnn.h5","model_maladie_cnn_final.keras",
-          "cnn_tchad_ft_best.keras","cnn_maladie_best.keras"]
-    CLASSES_DEF=["Arachide_Malade","Arachide_Saine","Coton_Malade","Coton_Saine",
-                 "Mais_Malade","Mais_Saine","Mil_Malade","Mil_Saine","Sorgho_Malade","Sorgho_Saine"]
-    def load_cfg(d):
-        cfg=os.path.join(d,"config_maladies.json")
-        if os.path.exists(cfg):
-            try: return json.load(open(cfg)).get("classes",CLASSES_DEF)
-            except: pass
-        return CLASSES_DEF
-    for d in dossiers:
-        for n in noms:
-            p=os.path.join(d,n)
-            if not os.path.exists(p): continue
-            try:
-                import tensorflow as tf
-                if n.endswith(".tflite"):
-                    interp=tf.lite.Interpreter(model_path=p)
-                    interp.allocate_tensors()
-                    return interp,load_cfg(d),True,"tflite"
-                else:
-                    m=tf.keras.models.load_model(p,compile=False)
-                    return m,load_cfg(d),True,"keras"
-            except Exception: continue
-    return None,[],False,"none""""
-
-new = """@st.cache_resource
+@st.cache_resource
 def charger_cnn():
     dossiers = [
         "/mount/src/pfe_agriculture_ia/models",
@@ -58,9 +26,9 @@ def charger_cnn():
         os.path.join(os.getcwd(), "models"),
         "models",
     ]
-    CLASSES_DEF = ["Arachide_Malade","Arachide_Saine","Coton_Malade","Coton_Saine",
-                   "Mais_Malade","Mais_Saine","Mil_Malade","Mil_Saine",
-                   "Sorgho_Malade","Sorgho_Saine"]
+    CLASSES_DEF = ["Arachide_Malade","Arachide_Saine","Coton_Malade",
+                   "Coton_Saine","Mais_Malade","Mais_Saine",
+                   "Mil_Malade","Mil_Saine","Sorgho_Malade","Sorgho_Saine"]
 
     def load_cfg(d):
         cfg = os.path.join(d, "config_maladies.json")
@@ -73,7 +41,7 @@ def charger_cnn():
         p = os.path.join(d, "model_maladie.tflite")
         if not os.path.exists(p):
             continue
-        # Méthode 1 : tflite-runtime (Streamlit Cloud, sans TensorFlow)
+        # Méthode 1 : tflite-runtime (léger, sans TensorFlow)
         try:
             import tflite_runtime.interpreter as tflite
             interp = tflite.Interpreter(model_path=p)
@@ -81,7 +49,7 @@ def charger_cnn():
             return interp, load_cfg(d), True, "tflite"
         except ImportError:
             pass
-        # Méthode 2 : tensorflow complet (local Ubuntu)
+        # Méthode 2 : tensorflow complet (si disponible)
         try:
             import tensorflow as tf
             interp = tf.lite.Interpreter(model_path=p)
@@ -89,18 +57,8 @@ def charger_cnn():
             return interp, load_cfg(d), True, "tflite"
         except ImportError:
             pass
-        except Exception:
-            pass
 
     return None, CLASSES_DEF, False, "none"
-"""
-
-if old in content:
-    content = content.replace(old, new)
-    open("pages/3_Detection_Maladies.py", "w").write(content)
-    print("✅ Fonction charger_cnn mise à jour")
-else:
-    print("⚠️ Ancien code non trouvé — mise à jour manuelle nécessaire")
 model_cnn,CLASSES,CNN_OK,CNN_MODE=charger_cnn()
 
 CONSEILS={

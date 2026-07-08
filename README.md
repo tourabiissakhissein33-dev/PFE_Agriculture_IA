@@ -72,6 +72,8 @@ streamlit run app.py
 
 ```
 http://localhost:8501
+
+https://agro-ia-tchad.streamlit.app/
 ```
 
 ## PFE ENASTIC 2025/2026
