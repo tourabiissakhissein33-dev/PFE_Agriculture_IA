@@ -1,0 +1,284 @@
+% ══════════════════════════════════════════════════════════════════
+% CHAPITRE 1 — TRAVAUX EXISTANTS
+% Plan : Intro · 1.1 · 1.2 · 1.3 · 1.4 · Conclusion
+% ══════════════════════════════════════════════════════════════════
+
+\pagechapitre{chap:travaux}{Travaux existants}
+
+\section*{Introduction}
+\addcontentsline{toc}{section}{Introduction}
+
+Ce chapitre dresse un état des lieux des connaissances et des
+technologies sur lesquelles s'appuie notre travail. Il présente
+d'abord l'agriculture de précision et le suivi parcellaire, puis
+la nature des données agricoles exploitables. Il expose ensuite
+les principales techniques d'Intelligence Artificielle appliquées
+à l'agriculture, avant d'analyser les solutions existantes afin
+de positionner notre contribution.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Agriculture de précision et suivi parcellaire}
+\label{sec:agri_precision}
+% ══════════════════════════════════════════════════════════════════
+
+\subsection{Définition et principes}
+
+L'agriculture de précision désigne un ensemble de pratiques et de
+technologies visant à optimiser la gestion des cultures en tenant
+compte de la variabilité spatiale et temporelle des parcelles
+\cite{liakos2018machine}. Plutôt que d'appliquer uniformément les
+intrants (eau, engrais, produits phytosanitaires), elle propose
+d'ajuster les interventions aux besoins réels de chaque zone,
+mesurés à partir de données objectives. Ses bénéfices attendus
+sont triples : augmentation des rendements, réduction des coûts
+et préservation de l'environnement.
+
+\subsection{Le suivi parcellaire}
+
+Le suivi parcellaire consiste à observer régulièrement l'état
+d'une parcelle agricole --- humidité du sol, état sanitaire des
+plantes, stade de développement --- afin de déclencher au bon
+moment les interventions appropriées : irrigation, fertilisation
+ou traitement. Traditionnellement assuré par l'observation
+visuelle de l'agriculteur et les conseils d'agronomes, ce suivi
+peut aujourd'hui être outillé par des capteurs, des stations
+météorologiques, des images satellitaires et des applications
+d'aide à la décision.
+
+\subsection{Contexte agricole du Tchad}
+
+Le Tchad dispose d'environ 39 millions d'hectares de terres
+cultivables, dont une faible fraction seulement est exploitée
+\cite{banquemondiale2023}. L'agriculture y est essentiellement
+pluviale et familiale, structurée autour de deux grandes zones
+agro-climatiques : la zone \textbf{sahélienne} au centre
+(N'Djamena, Abéché), caractérisée par une pluviométrie faible et
+irrégulière (300--600 mm/an), et la zone \textbf{soudanienne} au
+sud (Sarh, Moundou, Bongor), plus arrosée (800--1~200 mm/an).
+Les cinq cultures retenues dans ce travail --- mil, sorgho,
+arachide, maïs et coton --- représentent l'essentiel des
+superficies cultivées du pays.
+
+\subsection{Défis du suivi parcellaire en zone sahélienne}
+
+Le déploiement du suivi parcellaire au Tchad se heurte à
+plusieurs obstacles :
+
+\begin{itemize}[leftmargin=1.2cm]
+	\item le nombre limité d'agronomes et de techniciens agricoles
+	en zone rurale ;
+	\item l'absence de stations météorologiques de proximité et
+	d'accès aux prévisions localisées ;
+	\item le coût élevé des équipements de mesure (sondes
+	d'humidité, capteurs NPK) ;
+	\item la faible couverture internet et électrique des zones
+	agricoles.
+\end{itemize}
+
+Ces contraintes orientent naturellement vers des solutions
+logicielles légères, exploitant des données gratuites
+(satellites, réanalyses climatiques) et accessibles depuis un
+simple smartphone.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Données agricoles : nature et hétérogénéité}
+\label{sec:donnees_agricoles}
+% ══════════════════════════════════════════════════════════════════
+
+Les données exploitables pour le suivi parcellaire sont de
+natures très diverses ; leur hétérogénéité constitue à la fois
+une richesse et un défi pour les systèmes d'aide à la décision.
+
+\subsection{Données climatiques}
+
+Les variables climatiques --- température, humidité relative,
+précipitations, rayonnement solaire, vitesse du vent et
+évapotranspiration potentielle (ETP) --- conditionnent
+directement les besoins en eau des cultures. Deux sources
+gratuites sont particulièrement pertinentes pour le Tchad :
+
+\begin{itemize}[leftmargin=1.2cm]
+	\item \textbf{NASA POWER} \cite{stackhouse2019nasa} : base de
+	réanalyses climatiques mondiales fournissant des séries
+	journalières historiques depuis 1981, à une résolution
+	de 0,5° × 0,5°, utilisée ici pour constituer le jeu
+	d'entraînement du module Irrigation ;
+	\item \textbf{Open-Meteo} \cite{zippenfenig2023openmeteo} :
+	API météorologique temps réel et gratuite, sans clé
+	d'authentification, utilisée par l'application pour
+	pré-remplir automatiquement les formulaires.
+\end{itemize}
+
+\subsection{Données pédologiques}
+
+Les propriétés du sol --- teneurs en azote (N), phosphore (P) et
+potassium (K), pH, texture (sableux, limoneux, argileux) et
+humidité --- déterminent la disponibilité des nutriments et le
+choix des engrais. Ces données proviennent d'analyses de sol en
+laboratoire ou de kits de terrain.
+
+\subsection{Données visuelles et télédétection}
+
+L'état sanitaire des cultures peut être évalué à partir d'images :
+
+\begin{itemize}[leftmargin=1.2cm]
+	\item \textbf{Photographies de feuilles} prises au smartphone,
+	analysables par des réseaux de neurones convolutifs pour
+	détecter les symptômes de maladies
+	\cite{mohanty2016deep} ;
+	\item \textbf{Images satellitaires} : le programme européen
+	Sentinel-2 \cite{sentinel2esa} fournit gratuitement des
+	images multispectrales à 10~m de résolution, revisitées
+	tous les 5 jours, dont on dérive des indices de
+	végétation ;
+	\item \textbf{Imagerie aérienne} par drones multispectraux,
+	offrant une résolution centimétrique, mais dont le coût
+	d'acquisition reste élevé pour le contexte tchadien.
+\end{itemize}
+
+\subsection{L'indice de végétation NDVI}
+
+Le NDVI (\textit{Normalized Difference Vegetation Index})
+\cite{rouse1974monitoring} est l'indice le plus utilisé pour
+quantifier la vigueur de la végétation. Il est calculé à partir
+des réflectances dans le rouge (RED) et le proche infrarouge
+(NIR) :
+
+\begin{equation}
+	\text{NDVI} = \frac{\text{NIR} - \text{RED}}
+	{\text{NIR} + \text{RED}}
+	\label{eq:ndvi}
+\end{equation}
+
+Ses valeurs varient de $-1$ à $+1$ : une végétation dense et
+saine réfléchit fortement le proche infrarouge (NDVI $> 0{,}5$),
+tandis qu'une végétation stressée ou malade voit son NDVI chuter
+(NDVI $< 0{,}3$).
+
+% ══════════════════════════════════════════════════════════════════
+\section{Intelligence artificielle appliquée à l'agriculture}
+\label{sec:ia_agriculture}
+% ══════════════════════════════════════════════════════════════════
+
+\subsection{Apprentissage automatique classique}
+
+Les algorithmes d'apprentissage supervisé classiques excellent
+sur les données tabulaires (climatiques, pédologiques). Deux
+familles sont particulièrement adaptées à notre problème :
+
+\begin{itemize}[leftmargin=1.2cm]
+	\item \textbf{Random Forest} \cite{breiman2001random} :
+	ensemble d'arbres de décision entraînés sur des
+	sous-échantillons aléatoires, dont la prédiction finale
+	résulte d'un vote majoritaire. Robuste au bruit et peu
+	sensible au surapprentissage, il fournit en outre une
+	mesure d'importance des variables ;
+	\item \textbf{XGBoost} \cite{chen2016xgboost} : implémentation
+	optimisée du \textit{gradient boosting}, construisant
+	séquentiellement des arbres correcteurs d'erreurs.
+	Il domine régulièrement les compétitions de science des
+	données sur données structurées.
+\end{itemize}
+
+\subsection{Apprentissage profond et vision par ordinateur}
+
+Les réseaux de neurones convolutifs (CNN) ont révolutionné la
+reconnaissance d'images. Appliqués à la santé des plantes,
+Mohanty \textit{et al.} \cite{mohanty2016deep} ont atteint
+99,35\,\% de précision sur le dataset PlantVillage (54~000
+images en conditions contrôlées) ; toutefois, la précision de
+leur modèle chute à environ 31\,\% sur des images de terrain,
+illustrant le fossé entre conditions de laboratoire et réalité
+agricole --- un point central pour notre travail sur des images
+tchadiennes réelles.
+
+\subsection{Transfert d'apprentissage et modèles légers}
+
+Le \textit{transfer learning} consiste à réutiliser un réseau
+pré-entraîné sur un grand corpus générique (ImageNet, 14
+millions d'images) et à ne réentraîner que ses couches
+supérieures sur le jeu de données cible. Cette approche est
+incontournable lorsque les données annotées sont rares, comme
+c'est le cas pour les cultures tchadiennes.
+\textbf{MobileNetV2} \cite{sandler2018mobilenetv2} est une
+architecture conçue pour les environnements contraints :
+ses blocs résiduels inversés réduisent drastiquement le nombre
+de paramètres, et sa conversion au format \textbf{TensorFlow
+	Lite} permet un déploiement léger (quelques mégaoctets) adapté
+au web et au mobile.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Analyse des solutions existantes et positionnement}
+\label{sec:solutions_existantes}
+% ══════════════════════════════════════════════════════════════════
+
+\subsection{Solutions existantes}
+
+Plusieurs applications d'agriculture numérique sont déployées en
+Afrique et dans le monde. Le tableau~\ref{tab:solutions} en
+compare les principales caractéristiques avec notre proposition.
+
+\begin{table}[H]
+	\centering
+	\caption{Comparaison des solutions existantes avec Agro-IA Tchad}
+	\label{tab:solutions}
+	\small
+	\begin{tabularx}{\textwidth}{lXXXX}
+		\toprule
+		\textbf{Critère} & \textbf{Plantix} & \textbf{Esoko} &
+		\textbf{PlantVillage Nuru} & \textbf{Agro-IA Tchad} \\
+		\midrule
+		Origine & Allemagne & Ghana & International & Tchad \\
+		Détection maladies & Oui (photo) & Non & Oui (photo) &
+		Oui (photo + NDVI) \\
+		Conseil irrigation & Non & Non & Non & Oui (IA) \\
+		Conseil fertilisation & Partiel & Non & Non & Oui (IA) \\
+		Historique local & Non & Non & Non & Oui (SQLite) \\
+		Cultures tchadiennes & Non & Non & Partiel & Oui (5 cultures) \\
+		Météo temps réel & Oui & Oui & Non & Oui (Open-Meteo) \\
+		Coût & Gratuit & Abonnement & Gratuit & Gratuit \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+\subsection{Limites des solutions existantes}
+
+L'analyse du tableau~\ref{tab:solutions} révèle trois lacunes
+majeures pour le contexte tchadien : (i) aucune solution ne
+couvre simultanément l'irrigation, la fertilisation et la
+détection des maladies ; (ii) les modèles de reconnaissance sont
+entraînés sur des cultures et des conditions étrangères, peu
+représentatives des variétés et symptômes locaux ; (iii) aucune
+ne propose de traçabilité locale des analyses permettant un
+suivi historique des parcelles.
+
+\subsection{Positionnement de notre contribution}
+
+Notre système Agro-IA Tchad se positionne comme une réponse
+intégrée à ces lacunes :
+
+\begin{itemize}[leftmargin=1.2cm]
+	\item \textbf{Multi-modules} : quatre modules complémentaires
+	(Irrigation, Fertilisation, Détection des maladies,
+	Historique) réunis dans une même application ;
+	\item \textbf{Adaptation locale} : modèles entraînés sur des
+	données climatiques tchadiennes (NASA POWER, 5 villes)
+	et sur un dataset d'images collectées au Tchad
+	(287 images, 10 classes) ;
+	\item \textbf{Traçabilité} : base SQLite intégrée avec
+	statistiques et export CSV ;
+	\item \textbf{Accessibilité} : application web gratuite,
+	déployée sur le cloud, exploitant la météo temps réel.
+\end{itemize}
+
+\section*{Conclusion}
+\addcontentsline{toc}{section}{Conclusion}
+
+Ce chapitre a présenté les fondements de l'agriculture de
+précision, la diversité des données agricoles mobilisables, les
+techniques d'IA pertinentes --- Random Forest, XGBoost et CNN
+par transfert d'apprentissage --- ainsi que les limites des
+solutions existantes au regard du contexte tchadien. Ce
+positionnement établi, le chapitre suivant procède à l'analyse
+des besoins et à la conception détaillée du système Agro-IA
+Tchad.

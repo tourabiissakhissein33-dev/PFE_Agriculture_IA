@@ -1,0 +1,91 @@
+% ══════════════════════════════════════════════════════════════════
+% RÉSUMÉ (français) + ABSTRACT (anglais)
+% ══════════════════════════════════════════════════════════════════
+
+\chapter*{Résumé}
+\addcontentsline{toc}{chapter}{Résumé}
+\markboth{Résumé}{Résumé}
+\thispagestyle{plain}
+
+L'agriculture tchadienne, pilier de l'économie nationale, souffre
+d'un déficit d'outils d'aide à la décision adaptés aux réalités
+locales. Ce mémoire présente la conception et l'implémentation
+d'un cadre décisionnel basé sur l'Intelligence Artificielle pour
+l'optimisation du suivi parcellaire agricole au Tchad, dénommé
+\textbf{Agro-IA Tchad}.
+
+\medskip
+
+Le système intègre quatre modules complémentaires. Le
+\textbf{module Irrigation} repose sur l'algorithme Random Forest,
+entraîné sur 16~435 observations climatiques réelles issues de la
+base NASA POWER pour cinq villes tchadiennes (2015--2023) ; il
+atteint une accuracy de 78,51\,\% et un AUC-ROC de 0,8782. Le
+\textbf{module Fertilisation} utilise XGBoost sur 1~599
+observations et recommande l'engrais optimal avec une accuracy de
+95,42\,\% (F1-score macro de 95,47\,\%). Le \textbf{module
+	Détection des maladies} combine un réseau de neurones convolutif
+MobileNetV2 --- entraîné par transfert d'apprentissage sur un
+dataset local de 287 images de cultures tchadiennes (accuracy de
+52,27\,\%) --- avec l'analyse d'indices de végétation NDVI issus
+du satellite Sentinel-2 ou estimés par caméra smartphone (indice
+VARI). Enfin, le \textbf{module Historique} assure la traçabilité
+de toutes les analyses grâce à une base de données SQLite avec
+export CSV.
+
+\medskip
+
+L'application web, développée avec le framework Streamlit et
+intégrant l'API météorologique Open-Meteo en temps réel, est
+déployée sur Streamlit Cloud et accessible depuis tout navigateur.
+
+\medskip
+
+\noindent\textbf{Mots-clés :} Intelligence Artificielle, Random
+Forest, XGBoost, CNN MobileNetV2, NDVI, Agriculture de précision,
+Tchad, Streamlit, SQLite.
+
+\newpage
+
+% ──────────────────────────────────────────────────────────────────
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\markboth{Abstract}{Abstract}
+\thispagestyle{plain}
+
+Chadian agriculture, a pillar of the national economy, suffers
+from a lack of decision-support tools adapted to local realities.
+This thesis presents the design and implementation of an
+Artificial Intelligence-based decision framework for optimizing
+agricultural plot monitoring in Chad, named \textbf{Agro-IA
+	Tchad}.
+
+\medskip
+
+The system integrates four complementary modules. The
+\textbf{Irrigation module} is based on the Random Forest
+algorithm, trained on 16,435 real climate observations from the
+NASA POWER database for five Chadian cities (2015--2023),
+achieving 78.51\,\% accuracy and an AUC-ROC of 0.8782. The
+\textbf{Fertilization module} uses XGBoost on 1,599 observations
+and recommends the optimal fertilizer with 95.42\,\% accuracy
+(macro F1-score of 95.47\,\%). The \textbf{Disease Detection
+	module} combines a MobileNetV2 convolutional neural network ---
+trained by transfer learning on a local dataset of 287 images of
+Chadian crops (52.27\,\% accuracy) --- with NDVI vegetation
+indices from the Sentinel-2 satellite or estimated via smartphone
+camera (VARI index). Finally, the \textbf{History module} ensures
+traceability of all analyses through a SQLite database with CSV
+export.
+
+\medskip
+
+The web application, developed with the Streamlit framework and
+integrating the Open-Meteo real-time weather API, is deployed on
+Streamlit Cloud and accessible from any browser.
+
+\medskip
+
+\noindent\textbf{Keywords:} Artificial Intelligence, Random
+Forest, XGBoost, CNN MobileNetV2, NDVI, Precision Agriculture,
+Chad, Streamlit, SQLite.

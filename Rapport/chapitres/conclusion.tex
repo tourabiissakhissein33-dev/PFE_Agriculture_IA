@@ -1,0 +1,114 @@
+% ══════════════════════════════════════════════════════════════════
+% CONCLUSION GÉNÉRALE ET PERSPECTIVES
+% ══════════════════════════════════════════════════════════════════
+
+\chapter*{Conclusion Générale et Perspectives}
+\addcontentsline{toc}{chapter}{Conclusion Générale et Perspectives}
+\markboth{Conclusion Générale et Perspectives}
+{Conclusion Générale et Perspectives}
+
+\section*{Synthèse des travaux}
+\addcontentsline{toc}{section}{Synthèse des travaux}
+
+Ce mémoire avait pour ambition de répondre à une question
+concrète : comment offrir à l'agriculteur tchadien un outil
+d'aide à la décision accessible, fiable et adapté aux réalités
+locales ? La réponse apportée est le système \textbf{Agro-IA
+	Tchad}, un cadre décisionnel complet articulé autour de quatre
+modules.
+
+\medskip
+
+Le \textbf{module Irrigation}, fondé sur un Random Forest
+entraîné sur 16~435 observations climatiques réelles de la base
+NASA POWER (cinq villes, 2015--2023), prédit le besoin en eau
+avec une accuracy de 78,51\,\% et un AUC-ROC de 0,8782,
+dépassant le seuil de fiabilité fixé lors de la spécification
+des besoins. Le \textbf{module Fertilisation}, s'appuyant sur
+XGBoost et 1~599 observations, recommande l'engrais optimal avec
+une accuracy remarquable de 95,42\,\%. Le \textbf{module
+	Détection des maladies} associe un CNN MobileNetV2 --- entraîné
+par transfert d'apprentissage sur un dataset original de 287
+images de cultures tchadiennes, une contribution en soi --- à
+l'analyse d'indices NDVI issus de Sentinel-2 ou estimés par
+caméra smartphone ; son accuracy de 52,27\,\% sur images de
+terrain constitue une base solide au regard de la littérature.
+Enfin, le \textbf{module Historique} garantit la traçabilité de
+toutes les analyses via une base SQLite, avec statistiques,
+export CSV et purge sélective, l'ensemble des tests fonctionnels
+ayant été validés.
+
+\medskip
+
+L'application web qui intègre ces modules, développée avec
+Streamlit et alimentée en temps réel par l'API Open-Meteo, est
+déployée sur Streamlit Cloud et accessible gratuitement depuis
+tout navigateur. Les objectifs fixés en introduction sont ainsi
+atteints.
+
+\section*{Limites rencontrées}
+\addcontentsline{toc}{section}{Limites rencontrées}
+
+Ce travail comporte néanmoins des limites qu'il convient de
+souligner avec honnêteté. La première tient à la \textbf{taille
+	du dataset d'images} : avec environ 28 images par classe, le
+module de détection des maladies ne peut rivaliser avec les
+systèmes entraînés sur des dizaines de milliers d'images ; les
+confusions entre céréales morphologiquement proches (mil,
+sorgho) en sont la conséquence directe. La deuxième concerne la
+\textbf{persistance sur l'hébergement cloud gratuit}, dont le
+système de fichiers éphémère réinitialise la base SQLite à
+chaque redémarrage --- l'export CSV atténue cette contrainte
+sans la supprimer. La troisième est l'\textbf{absence de
+	validation agronomique de terrain} : les recommandations n'ont
+pas encore été confrontées à des campagnes réelles menées avec
+des agriculteurs et des agronomes de l'ITRAD. Enfin, la
+\textbf{dépendance à la connectivité internet} limite l'usage
+dans les zones rurales les moins couvertes.
+
+\section*{Perspectives d'amélioration}
+\addcontentsline{toc}{section}{Perspectives d'amélioration}
+
+Les perspectives ouvertes par ce travail s'organisent en trois
+horizons.
+
+\medskip
+
+\textbf{À court terme}, l'enrichissement du dataset local à
+100--200 images par classe --- par des campagnes de collecte
+photographique dans les zones de production --- devrait porter
+l'accuracy du module maladies à 70--80\,\%. L'intégration de
+l'API Sentinel Hub permettrait en outre de récupérer
+automatiquement le NDVI d'une parcelle géolocalisée, supprimant
+la saisie manuelle.
+
+\medskip
+
+\textbf{À moyen terme}, deux évolutions majeures sont
+envisagées : d'une part le passage à une architecture
+client-serveur (Django, PostgreSQL) offrant des comptes
+utilisateurs et une persistance pérenne de l'historique ;
+d'autre part l'intégration de la \textbf{détection des maladies
+	par drone multispectral}, qui permettrait de cartographier
+l'état sanitaire de parcelles entières à résolution
+centimétrique --- capteurs proche infrarouge embarqués, calcul
+de cartes NDVI/NDRE complètes et localisation précise des foyers
+d'infection --- là où la version actuelle repose sur des
+observations ponctuelles (photo de feuille, pixel satellite).
+
+\medskip
+
+\textbf{À long terme}, le système pourrait évoluer vers une
+plateforme nationale de suivi agricole : application mobile
+fonctionnant hors-ligne avec synchronisation différée, interfaces
+en langues locales, intégration de capteurs IoT in situ
+(humidité du sol, NPK) et tableaux de bord agrégés à destination
+des services agricoles de l'État et de l'ITRAD.
+
+\medskip
+
+En définitive, Agro-IA Tchad démontre qu'une intelligence
+artificielle frugale --- données ouvertes, modèles légers, outils
+gratuits --- peut produire un outil opérationnel au service de
+l'agriculture sahélienne, et pose les fondations techniques d'un
+système d'information agricole à l'échelle du pays.

@@ -1,0 +1,111 @@
+% ══════════════════════════════════════════════════════════════════
+% PAGE DE GARDE — modèle ENASTIC (fragment, inclus par main.tex)
+% ══════════════════════════════════════════════════════════════════
+
+\begin{titlepage}
+	\thispagestyle{empty}
+	
+	% ── Bordure bleue extérieure (comme le modèle) ───────────────────
+	\begin{tikzpicture}[remember picture, overlay]
+		\draw[bleuENASTIC, line width=1.6pt]
+		([xshift=0.9cm,  yshift=-0.9cm] current page.north west) rectangle
+		([xshift=-0.9cm, yshift=0.9cm]  current page.south east);
+	\end{tikzpicture}
+	
+	% ── Logos : ENASTIC à gauche, institution d'accueil à droite ─────
+	
+	\vspace{-1cm}
+	\noindent
+	\begin{minipage}[t]{2\textwidth}
+		\vspace{0pt}
+		% Placez votre logo dans images/logo_enastic.png
+		\IfFileExists{images/logo_enastic.png}{%
+			\includegraphics[width=11cm]{images/logo_enastic.png}%
+		}{%
+			{\Large\bfseries\color{bleuENASTIC}ENASTIC}\\[2pt]
+			{\footnotesize École Nationale Supérieure des TIC}%
+		}
+	\end{minipage}
+
+	
+	% ── Titre principal ───────────────────────────────────────────────
+	\begin{center}
+		{\fontsize{28}{34}\selectfont\bfseries Projet de Fin d'Études}
+		
+		\vspace{1cm}
+		
+		{\large En vue de l'obtention du Diplôme de Licence en Informatique}
+		
+		\vspace{0.5cm}
+		
+		{\large \textbf{Option} : Informatique}
+		
+	\vspace{0.1cm}
+		
+		% ── Encadré THÈME ─────────────────────────────────────────────────
+\begin{tcolorbox}[
+	enhanced,
+	colback=white,
+	colframe=blue,
+	boxrule=2pt,
+	arc=5mm,
+	width=\textwidth,
+	center title,
+	left=6mm,
+	right=6mm,
+	top=5mm,
+	bottom=5mm
+	]
+	
+	\begin{center}
+		
+		{\LARGE\bfseries THÈME : }
+		
+		\vspace{0.4cm}
+		
+		{\Large\bfseries
+			Conception et Implémentation d'un Cadre Décisionnel\\[0.35cm]
+			basé sur l'Intelligence Artificielle pour l'Optimisation\\[0.35cm]
+			du Suivi Parcellaire Agricole au Tchad\\[0.5cm]
+			\large (Irrigation, Fertilisation et Détection des Maladies)
+		}
+		
+	\end{center}
+	
+\end{tcolorbox}
+	\vspace{1.6cm}
+	
+	% ── Rédigé par / Sous la Direction de ─────────────────────────────
+	\noindent
+	\begin{minipage}[t]{0.46\textwidth}
+		\underline{\textbf{Rédigé et Présenté par}} :\\[10pt]
+		TOURABI ISSAK HISSEIN
+	\end{minipage}
+	\hfill
+	\begin{minipage}[t]{0.50\textwidth}
+		\underline{\textbf{Sous la Direction de}} :\\[10pt]
+		Dr. MOUAZ MIKAIL ,\\
+		Enseignant Chercheur à ENASTIC
+	\end{minipage}
+	
+	\vspace{1.8cm}
+	
+	% ── Jury ──────────────────────────────────────────────────────────
+	\noindent\underline{\textbf{Jury}} :\\
+	\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots \ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots
+	\ (Président)\\[6pt]
+	\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots \ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots\ldots
+	\ (Rapporteur)
+	
+	\vfill
+	
+	% ── Année académique dans une ellipse ─────────────────────────────
+	\begin{center}
+		\begin{tikzpicture}
+			\node[draw=black, line width=0.9pt, ellipse,
+			inner xsep=18pt, inner ysep=6pt]
+			{\textbf{Année Académique 2025--2026}};
+		\end{tikzpicture}
+	\end{center}
+	
+\end{titlepage}

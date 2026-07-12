@@ -1,0 +1,430 @@
+% ══════════════════════════════════════════════════════════════════
+% CHAPITRE 3 — IMPLÉMENTATION ET TESTS
+% Plan : Intro · 3.1 → 3.8 · Conclusion
+% ══════════════════════════════════════════════════════════════════
+
+\pagechapitre{chap:implementation}{Implémentation et Tests}
+
+\section*{Introduction}
+\addcontentsline{toc}{section}{Introduction}
+
+Ce chapitre décrit la réalisation concrète du système conçu au
+chapitre précédent. Il présente successivement l'environnement de
+développement, la collecte et le prétraitement des données,
+l'implémentation des trois modules d'Intelligence Artificielle,
+du module Historique et de l'application web qui les intègre,
+puis définit le protocole de tests appliqué à l'ensemble.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Environnement de développement}
+\label{sec:environnement}
+% ══════════════════════════════════════════════════════════════════
+
+Deux environnements complémentaires ont été utilisés : la
+plateforme cloud Kaggle pour l'entraînement des modèles
+(accélération GPU), et un poste local sous Ubuntu pour le
+développement et les tests de l'application. Le
+tableau~\ref{tab:environnements} en résume les caractéristiques.
+
+\begin{table}[H]
+	\centering
+	\caption{Environnements de développement utilisés}
+	\label{tab:environnements}
+	\small
+	\begin{tabularx}{\textwidth}{lXX}
+		\toprule
+		\textbf{Composant} & \textbf{Entraînement (Kaggle)} &
+		\textbf{Développement (local)} \\
+		\midrule
+		Système       & Linux (cloud)         & Ubuntu 24.04 LTS \\
+		Processeur    & 2 GPU Tesla T4        & CPU Intel (HP EliteBook) \\
+		Python        & 3.12                  & 3.12 \\
+		TensorFlow    & 2.20 (entraînement)   & TFLite Runtime 2.14 \\
+		Scikit-learn  & 1.3+                  & 1.3+ \\
+		XGBoost       & 2.0+                  & 2.0+ \\
+		Framework web & ---                   & Streamlit 1.35+ \\
+		SGBD          & ---                   & SQLite 3 (natif Python) \\
+		Éditeur       & Kaggle Notebook       & VS Code \\
+		Versionnage   & ---                   & Git / GitHub \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+L'application est organisée selon la structure multi-pages de
+Streamlit :
+
+\begin{lstlisting}[language=bash,
+	caption={Structure des fichiers de l'application},
+	label={lst:structure}]
+	PFE_Agriculture_IA/
+	|-- app.py                  # Page d'accueil
+	|-- database.py             # Module Historique (SQLite)
+	|-- meteo_api.py            # Client API Open-Meteo
+	|-- styles.py               # Feuille de style globale
+	|-- requirements.txt        # Dependances Python
+	|-- models/
+	|   |-- model_irrigation.pkl       # Random Forest
+	|   |-- scaler_irrigation.pkl
+	|   |-- model_fertilisation.pkl    # XGBoost
+	|   |-- scaler_fertilisation.pkl
+	|   |-- model_maladie.tflite       # CNN MobileNetV2
+	|   `-- config_maladies.json       # Liste des classes
+	`-- pages/
+	|-- 1_Irrigation.py
+	|-- 2_Fertilisation.py
+	|-- 3_Detection_Maladies.py
+	`-- 4_Historique.py
+\end{lstlisting}
+
+% ══════════════════════════════════════════════════════════════════
+\section{Collecte et prétraitement des données}
+\label{sec:collecte}
+% ══════════════════════════════════════════════════════════════════
+
+\subsection{Données d'irrigation --- NASA POWER}
+
+Les données climatiques ont été extraites de l'API NASA POWER
+\cite{stackhouse2019nasa} pour les cinq villes cibles
+(N'Djamena, Abéché, Sarh, Moundou, Bongor) sur la période
+2015--2023, soit \textbf{16~435 observations journalières}.
+Quinze variables explicatives ont été retenues : température
+moyenne et maximale, cumuls de pluie sur 7 et 14 jours, humidité
+de l'air et du sol, ETP, vent, rayonnement, ainsi que des
+variables agronomiques encodées (culture, stade phénologique,
+saison, type de sol, pH, zone climatique). La variable cible
+binaire (irriguer : OUI/NON) a été construite à partir de règles
+agronomiques croisant bilan hydrique et stade de la culture.
+
+Le prétraitement a comporté quatre étapes : encodage des
+variables catégorielles (LabelEncoder), normalisation des
+variables numériques (StandardScaler), traitement des valeurs
+manquantes par interpolation, et partitionnement stratifié
+en ensembles d'entraînement (70\,\%), de validation (15\,\%) et
+de test (15\,\%).
+
+\subsection{Données de fertilisation}
+
+Le jeu de données de fertilisation combine 99 observations
+réelles issues d'un dataset public Kaggle et 1~500 observations
+générées par augmentation cohérente (bruit gaussien contrôlé
+autour des signatures NPK de chaque engrais), soit
+\textbf{1~599 observations} couvrant cinq classes d'engrais :
+Urée, DAP, NPK 15-15-15, NPK 23-10-5 et KCl.
+
+\subsection{Dataset local d'images --- maladies}
+
+Un dataset de \textbf{287 images} de feuilles de cultures
+tchadiennes a été constitué, réparti en \textbf{10 classes}
+(5 cultures $\times$ 2 états : saine/malade), comme détaillé en
+annexe~A. Les images, prises en conditions réelles de terrain,
+ont été redimensionnées en $224 \times 224$ pixels et normalisées
+dans $[0,1]$. Pour compenser la petite taille du dataset, une
+augmentation de données a été appliquée à l'entraînement :
+rotations ($\pm 30°$), symétries horizontale et verticale, zoom
+($\pm 20\,\%$) et variations de luminosité ($0{,}65$ à $1{,}35$).
+
+% ══════════════════════════════════════════════════════════════════
+\section{Module IA --- Irrigation}
+\label{sec:module_irrigation}
+% ══════════════════════════════════════════════════════════════════
+
+\subsection{Choix de l'algorithme Random Forest}
+
+Le Random Forest \cite{breiman2001random} agrège les prédictions
+de $T$ arbres de décision entraînés sur des échantillons
+\textit{bootstrap} ; la classe finale résulte du vote
+majoritaire :
+
+\begin{equation}
+	\hat{y} = \arg\max_{c \in \{0,1\}} \sum_{t=1}^{T}
+	\mathbf{1}\left[ h_t(\mathbf{x}) = c \right]
+	\label{eq:rf}
+\end{equation}
+
+où $h_t(\mathbf{x})$ désigne la prédiction du $t$-ième arbre
+pour l'observation $\mathbf{x}$. Cet algorithme a été retenu
+pour sa robustesse au bruit, sa résistance au surapprentissage
+et sa capacité à mesurer l'importance des variables.
+
+\subsection{Entraînement et hyperparamètres}
+
+Les hyperparamètres ont été optimisés par validation croisée à 5
+plis. La configuration retenue est : 100 arbres
+(\texttt{n\_estimators}), profondeur non limitée
+(\texttt{max\_depth=None}), pondération équilibrée des classes
+(\texttt{class\_weight=balanced}) et graine fixée
+(\texttt{random\_state=42}) pour la reproductibilité.
+
+\subsection{Intégration dans l'application}
+
+Le modèle et son normaliseur, sérialisés avec \texttt{joblib},
+sont chargés une seule fois grâce au cache de Streamlit :
+
+\begin{lstlisting}[language=Python,
+	caption={Chargement et prédiction du module Irrigation},
+	label={lst:pred_irr}]
+	import joblib, numpy as np
+	
+	model  = joblib.load("models/model_irrigation.pkl")
+	scaler = joblib.load("models/scaler_irrigation.pkl")
+	
+	def predire_irrigation(features):
+	X  = scaler.transform(np.array([features]))
+	y  = model.predict(X)[0]
+	p  = model.predict_proba(X)[0]
+	return {"decision": "OUI" if y == 1 else "NON",
+		"confiance": round(p[y] * 100, 1)}
+\end{lstlisting}
+
+% ══════════════════════════════════════════════════════════════════
+\section{Module IA --- Fertilisation}
+\label{sec:module_fertilisation}
+% ══════════════════════════════════════════════════════════════════
+
+\subsection{Choix de l'algorithme XGBoost}
+
+XGBoost \cite{chen2016xgboost} construit séquentiellement des
+arbres correcteurs en minimisant une fonction objectif
+régularisée :
+
+\begin{equation}
+	\mathcal{L}(\phi) = \sum_{i=1}^{n} l\left(y_i, \hat{y}_i\right)
+	+ \sum_{k=1}^{K} \Omega\left(f_k\right)
+	\label{eq:xgb}
+\end{equation}
+
+où $l$ est la perte (entropie croisée multi-classes) et
+$\Omega(f_k)$ pénalise la complexité de l'arbre $k$, limitant le
+surapprentissage --- un atout essentiel sur notre jeu de données
+de taille modeste.
+
+\subsection{Entrées et sorties du module}
+
+Le modèle prend en entrée onze variables (N, P, K, pH,
+température, humidités de l'air et du sol, pluie, culture, type
+de sol, zone) et prédit l'un des cinq engrais. La recommandation
+affichée est enrichie d'une dose indicative (kg/ha) et de la
+période d'application, issues d'une table de correspondance
+agronomique.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Module IA --- Détection des maladies}
+\label{sec:module_maladies}
+% ══════════════════════════════════════════════════════════════════
+
+\subsection{Architecture CNN MobileNetV2 et transfert d'apprentissage}
+
+Le réseau retenu est MobileNetV2 \cite{sandler2018mobilenetv2}
+pré-entraîné sur ImageNet, surmonté d'une tête de classification
+adaptée : GlobalAveragePooling, couche dense de 256 neurones
+(ReLU) avec BatchNormalization et Dropout (0,5), couche dense de
+128 neurones (ReLU) avec BatchNormalization et Dropout (0,4), et
+couche de sortie Softmax à 10 classes.
+
+L'entraînement, mené sur Kaggle (2 GPU T4), a suivi une stratégie
+en deux phases : (i) base gelée, seule la tête est entraînée
+(taux d'apprentissage $10^{-3}$, arrêt précoce avec patience de
+10 époques) ; (ii) \textit{fine-tuning} des 30 dernières couches
+de la base (taux réduit à $10^{-4}$).
+
+\subsection{Conversion au format TensorFlow Lite}
+
+Pour garantir un déploiement léger et compatible avec
+l'environnement cloud, le modèle Keras a été converti au format
+TFLite \cite{tensorflow2023} avec quantification par défaut,
+ramenant sa taille à moins de 10~Mo. L'inférence dans
+l'application s'effectue via la bibliothèque légère
+\texttt{tflite-runtime}, sans dépendance à TensorFlow complet.
+
+\subsection{Analyse NDVI : satellite et caméra smartphone}
+
+En complément du diagnostic par photographie, le module propose
+une évaluation par indice de végétation selon deux sources :
+
+\begin{itemize}[leftmargin=1.2cm]
+	\item \textbf{Satellite Sentinel-2} \cite{sentinel2esa} :
+	l'utilisateur relève la valeur NDVI de sa parcelle sur
+	la plateforme gratuite EO Browser et la saisit dans
+	l'application, qui l'interprète selon des seuils
+	spécifiques à chaque culture ;
+	\item \textbf{Caméra smartphone} : à défaut de capteur proche
+	infrarouge, l'indice VARI est calculé sur les canaux
+	visibles de la photographie :
+\end{itemize}
+
+\begin{equation}
+	\text{VARI} = \frac{G - R}{G + R - B}
+	\label{eq:vari}
+\end{equation}
+
+puis converti en estimation du NDVI par la relation empirique :
+
+\begin{equation}
+	\text{NDVI}_{\text{estimé}} = 0{,}18 + 0{,}73 \times \text{VARI}
+	\label{eq:vari_ndvi}
+\end{equation}
+
+Le diagnostic final croise l'indice obtenu avec les conditions
+climatiques (température, humidité, pluie) pour classer la
+parcelle en trois états : saine, en stress ou malade, assortis
+d'un conseil de traitement.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Module Historique --- Persistance SQLite et export CSV}
+\label{sec:module_historique}
+% ══════════════════════════════════════════════════════════════════
+
+\subsection{Implémentation de la couche d'accès aux données}
+
+Le module \texttt{database.py} centralise toutes les opérations
+sur la base \texttt{historique.db}, conformément au modèle défini
+à la section~\ref{sec:bdd_historique}. À l'initialisation, les
+trois tables sont créées si elles n'existent pas
+(\texttt{CREATE TABLE IF NOT EXISTS}). Chaque module d'analyse
+appelle ensuite sa fonction de sauvegarde dédiée :
+
+\begin{lstlisting}[language=Python,
+	caption={Sauvegarde d'une analyse d'irrigation dans SQLite},
+	label={lst:sqlite}]
+	import sqlite3
+	from datetime import datetime
+	
+	def sauvegarder_irrigation(ville, culture, resultat,
+	dose_mm, confiance):
+	conn = sqlite3.connect("historique.db")
+	conn.execute("""
+	INSERT INTO irrigation
+	(date_analyse, ville, culture,
+	resultat, dose_mm, confiance)
+	VALUES (?, ?, ?, ?, ?, ?)""",
+	(datetime.now().strftime("%Y-%m-%d %H:%M"),
+	ville, culture, resultat, dose_mm, confiance))
+	conn.commit()
+	conn.close()
+\end{lstlisting}
+
+L'utilisation de requêtes paramétrées (\texttt{?}) protège la
+base contre les injections SQL.
+
+\subsection{Consultation, statistiques et export}
+
+La page Historique agrège les trois tables et offre :
+
+\begin{itemize}[leftmargin=1.2cm]
+	\item une \textbf{vue chronologique unifiée} des analyses
+	(module, culture, ville, résultat, confiance) ;
+	\item des \textbf{statistiques globales} : nombre d'analyses
+	par module, culture la plus analysée, zone à risque
+	(ville comptant le plus de diagnostics \og malade \fg),
+	taux d'irrigation recommandée et taux de maladies
+	détectées ;
+	\item l'\textbf{export CSV} de chaque table ou de l'historique
+	complet, généré en mémoire et proposé au téléchargement ;
+	\item la \textbf{purge sélective} de l'historique, par module
+	ou en totalité.
+\end{itemize}
+
+% ══════════════════════════════════════════════════════════════════
+\section{Développement de l'application web}
+\label{sec:appli_web}
+% ══════════════════════════════════════════════════════════════════
+
+\subsection{Framework Streamlit}
+
+L'interface a été développée avec Streamlit \cite{streamlit2024},
+framework Python permettant de construire des applications web de
+données sans développement front-end distinct. L'application
+compte cinq pages : l'accueil (métriques des modèles et
+statistiques de l'historique) et les quatre modules. Les modèles
+sont chargés une seule fois par session grâce au décorateur
+\texttt{@st.cache\_resource}, garantissant des temps de réponse
+inférieurs à la contrainte des 3 secondes.
+
+\subsection{Intégration de la météo temps réel}
+
+Le module \texttt{meteo\_api.py} interroge l'API Open-Meteo
+\cite{zippenfenig2023openmeteo} pour les cinq villes couvertes :
+conditions courantes (température, humidité, vent), cumuls de
+pluie sur 7 et 14 jours, ETP et humidité du sol. Les réponses
+sont mises en cache 30 minutes (\texttt{@st.cache\_data}) afin de
+limiter les appels réseau. Ces valeurs pré-remplissent
+automatiquement les formulaires d'analyse, réduisant la saisie
+manuelle de l'agriculteur.
+
+\subsection{Interface et expérience utilisateur}
+
+Une feuille de style commune (\texttt{styles.py}) assure la
+cohérence visuelle : thème aux couleurs de la végétation,
+cartes de résultats colorées selon la décision (bleu :
+irrigation recommandée ; vert : parcelle saine ; orange :
+stress ; rouge : maladie), et affichage systématique de la
+confiance de la prédiction pour une décision éclairée.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Protocole de tests}
+\label{sec:protocole}
+% ══════════════════════════════════════════════════════════════════
+
+\subsection{Métriques d'évaluation des modèles}
+
+Les modèles de classification sont évalués à partir de la matrice
+de confusion (vrais/faux positifs $TP$, $FP$ ; vrais/faux
+négatifs $TN$, $FN$) au moyen des métriques usuelles :
+
+\begin{equation}
+	\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
+	\label{eq:accuracy}
+\end{equation}
+
+\begin{equation}
+	\text{Précision} = \frac{TP}{TP + FP}
+	\qquad
+	\text{Rappel} = \frac{TP}{TP + FN}
+	\label{eq:prec_rec}
+\end{equation}
+
+\begin{equation}
+	\text{F1} = 2 \times
+	\frac{\text{Précision} \times \text{Rappel}}
+	{\text{Précision} + \text{Rappel}}
+	\label{eq:f1}
+\end{equation}
+
+S'y ajoutent l'\textbf{AUC-ROC} (aire sous la courbe ROC,
+mesurant le pouvoir discriminant indépendamment du seuil de
+décision) et le \textbf{score de validation croisée} à $k=5$
+plis, qui apprécie la stabilité du modèle.
+
+\subsection{Démarche de validation des modèles}
+
+Chaque jeu de données a été partitionné de façon stratifiée en
+entraînement (70\,\%), validation (15\,\%) et test (15\,\%).
+L'optimisation des hyperparamètres s'est appuyée exclusivement
+sur les ensembles d'entraînement et de validation ; les
+performances rapportées au chapitre suivant sont mesurées sur
+l'ensemble de test, jamais vu pendant l'entraînement.
+
+\subsection{Plan de tests fonctionnels de l'application}
+
+Au-delà des modèles, l'application elle-même a été soumise à un
+plan de tests fonctionnels couvrant : le pré-remplissage météo
+(BF1), le déroulement complet d'une analyse pour chacun des
+trois modules d'IA (BF2 à BF5), et le module Historique ---
+sauvegarde automatique, consultation unifiée, exactitude des
+statistiques, export CSV et purge sélective (BF6 à BF8). Ces
+tests ont été exécutés en local puis rejoués sur l'environnement
+de production ; leurs résultats sont présentés au
+chapitre~\ref{chap:resultats}.
+
+\section*{Conclusion}
+\addcontentsline{toc}{section}{Conclusion}
+
+Ce chapitre a détaillé l'implémentation complète du système :
+préparation de trois jeux de données, entraînement des modèles
+Random Forest, XGBoost et CNN MobileNetV2 (converti en TFLite),
+réalisation du module Historique fondé sur SQLite avec export
+CSV, et intégration de l'ensemble dans une application web
+Streamlit alimentée par la météo temps réel. Un protocole de
+tests rigoureux --- métriques, partitionnement stratifié et plan
+de tests fonctionnels --- a été défini. Le chapitre suivant en
+présente les résultats et les discute.

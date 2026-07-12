@@ -1,0 +1,323 @@
+% ══════════════════════════════════════════════════════════════════
+% CHAPITRE 2 — ANALYSE, CONCEPTION ET MODÉLISATION UML
+% Plan : Intro · 2.1 · 2.2 · 2.3 · 2.4 · 2.5 · Conclusion
+% ══════════════════════════════════════════════════════════════════
+
+\pagechapitre{chap:conception}{Analyse, Conception et Modélisation UML}
+
+\section*{Introduction}
+\addcontentsline{toc}{section}{Introduction}
+
+Après avoir positionné notre travail par rapport à l'existant, ce
+chapitre aborde la phase d'analyse et de conception du système
+Agro-IA Tchad. Il identifie d'abord les acteurs et les problèmes à
+résoudre, spécifie ensuite les besoins fonctionnels et non
+fonctionnels, présente la modélisation UML du système, décrit
+l'architecture du cadre décisionnel et détaille enfin le modèle de
+la base de données assurant l'historique des analyses.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Analyse du problème et identification des acteurs}
+\label{sec:acteurs}
+% ══════════════════════════════════════════════════════════════════
+
+\subsection{Analyse du problème}
+
+L'analyse du contexte agricole tchadien, menée au chapitre
+précédent, fait ressortir quatre problèmes opérationnels auxquels
+le système doit répondre :
+
+\begin{enumerate}[leftmargin=1.2cm]
+	\item \textbf{Gestion approximative de l'irrigation} : en
+	l'absence de données objectives (humidité du sol, ETP,
+	prévisions), l'agriculteur irrigue selon son intuition,
+	avec pour conséquences un gaspillage d'eau ou un stress
+	hydrique des cultures ;
+	\item \textbf{Fertilisation inadaptée} : le choix de l'engrais
+	se fait rarement sur la base d'une analyse du sol,
+	entraînant des dépenses inutiles et un appauvrissement
+	progressif des terres ;
+	\item \textbf{Détection tardive des maladies} : faute de
+	diagnostic précoce, les maladies se propagent et causent
+	des pertes de récolte importantes ;
+	\item \textbf{Absence de traçabilité} : aucune trace des
+	décisions passées n'est conservée, ce qui empêche tout
+	suivi de l'évolution d'une parcelle dans le temps.
+\end{enumerate}
+
+\subsection{Identification des acteurs}
+
+Deux acteurs interagissent avec le système :
+
+\begin{itemize}[leftmargin=1.2cm]
+	\item \textbf{L'Agriculteur (ou agent de terrain)} --- acteur
+	principal : il saisit les paramètres de sa parcelle,
+	consulte la météo, lance les analyses et consulte
+	l'historique ;
+	\item \textbf{Les services externes} --- acteurs secondaires :
+	l'API Open-Meteo qui fournit les données météorologiques
+	en temps réel, et la plateforme Sentinel-2/EO Browser qui
+	fournit les valeurs NDVI.
+\end{itemize}
+
+\newpage
+% ══════════════════════════════════════════════════════════════════
+\section{Spécification des besoins}
+\label{sec:besoins}
+% ══════════════════════════════════════════════════════════════════
+
+\subsection{Besoins fonctionnels}
+
+Le tableau~\ref{tab:besoins_fonc} récapitule les besoins
+fonctionnels du système, regroupés par module.
+
+\begin{table}[H]
+	\centering
+	\caption{Besoins fonctionnels du système Agro-IA Tchad}
+	\label{tab:besoins_fonc}
+	\small
+	\begin{tabularx}{\textwidth}{clX}
+		\toprule
+		\textbf{Code} & \textbf{Module} & \textbf{Besoin fonctionnel} \\
+		\midrule
+		BF1 & Météo         & Afficher la météo temps réel des 5 villes
+		(T°, humidité, pluie, vent, ETP) \\
+		BF2 & Irrigation    & Prédire le besoin en irrigation (OUI/NON)
+		avec dose estimée (mm) et confiance \\
+		BF3 & Fertilisation & Recommander un engrais (Urée, DAP, NPK
+		15-15-15, NPK 23-10-5, KCl) avec dose et
+		période d'application \\
+		BF4 & Maladies      & Diagnostiquer l'état d'une culture par
+		photographie de feuille (CNN) \\
+		BF5 & Maladies      & Évaluer l'état d'une parcelle par indice
+		NDVI (satellite ou caméra smartphone) \\
+		BF6 & Historique    & Sauvegarder automatiquement chaque analyse
+		dans la base de données \\
+		BF7 & Historique    & Afficher l'historique, les statistiques et
+		permettre l'export CSV \\
+		BF8 & Historique    & Permettre la suppression de l'historique
+		par module ou en totalité \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+\subsection{Besoins non fonctionnels}
+
+\begin{itemize}[leftmargin=1.2cm]
+	\item \textbf{Performance} : temps de réponse d'une analyse
+	inférieur à 3 secondes ;
+	\item \textbf{Disponibilité} : accès 24h/24 depuis tout
+	navigateur (ordinateur, tablette, smartphone) ;
+	\item \textbf{Utilisabilité} : interface en français, simple,
+	avec pré-remplissage automatique des données météo ;
+	\item \textbf{Fiabilité} : accuracy minimale de 75\,\% pour les
+	modules Irrigation et Fertilisation ;
+	\item \textbf{Légèreté} : modèle de détection embarqué au format
+	TFLite (moins de 10 Mo) pour un chargement rapide ;
+	\item \textbf{Coût} : utilisation exclusive de services et
+	d'outils gratuits (open source, APIs libres).
+\end{itemize}
+
+\newpage
+% ══════════════════════════════════════════════════════════════════
+\section{Modélisation UML du système}
+\label{sec:uml}
+% ══════════════════════════════════════════════════════════════════
+
+\subsection{Diagramme de contexte}
+
+La figure~\ref{fig:contexte} situe le système dans son
+environnement : l'agriculteur est l'unique acteur humain ; les
+services externes (Open-Meteo, Sentinel-2) alimentent le système
+en données, et la base SQLite assure la persistance locale.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{/home/tourabi/Documents/PFE_Agriculture_IA/docs/diagrammes/1_diagramme_contexte.png}
+	\caption{Diagramme de contexte du système Agro-IA Tchad}
+	\label{fig:contexte}
+\end{figure}
+
+\newpage
+\subsection{Diagramme de cas d'utilisation}
+
+La figure~\ref{fig:usecase} présente les cinq cas d'utilisation
+offerts à l'agriculteur. Les relations
+\guillemotleft~include~\guillemotright{} matérialisent le recours
+automatique aux services externes : les modules d'analyse
+sollicitent l'API Open-Meteo pour pré-remplir les formulaires, et
+la détection par indice de végétation s'appuie sur les valeurs
+NDVI relevées sur Sentinel-2.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.85\linewidth]{/home/tourabi/Documents/PFE_Agriculture_IA/docs/diagrammes/cas d'utilisation.drawio.png}
+	\caption{Diagramme de cas d'utilisation global avec services externes}
+	\label{fig:usecase}
+\end{figure}
+
+\newpage
+\subsection{Diagramme de séquence --- analyse d'une parcelle}
+
+La figure~\ref{fig:sequence} détaille le scénario nominal d'une
+analyse : pré-remplissage météo, inférence du modèle, puis
+sauvegarde automatique dans l'historique avant l'affichage du
+résultat.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{/home/tourabi/Documents/PFE_Agriculture_IA/docs/diagrammes/3_sequence_analyse_parcelle.png}
+	\caption{Diagramme de séquence --- analyse d'une parcelle}
+	\label{fig:sequence}
+\end{figure}
+
+\subsection{Diagramme d'activités --- génération d'une recommandation}
+
+La figure~\ref{fig:activites} formalise le flot d'activités commun
+aux trois modules d'analyse, de la saisie des données jusqu'à
+l'affichage et l'archivage de la recommandation.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.65\linewidth]{/home/tourabi/Documents/PFE_Agriculture_IA/docs/diagrammes/4_activites_recommandation.png}
+	\caption{Diagramme d'activités --- génération d'une recommandation}
+	\label{fig:activites}
+\end{figure}
+
+% ══════════════════════════════════════════════════════════════════
+\section{Architecture du cadre décisionnel}
+\label{sec:architecture}
+% ══════════════════════════════════════════════════════════════════
+
+L'architecture du système est présentée sous deux angles
+complémentaires : la vue fonctionnelle en pipeline
+(figure~\ref{fig:archi_generale}), qui suit le cheminement des
+données depuis leurs sources jusqu'à l'agriculteur, et la vue en
+couches logicielles (figure~\ref{fig:architecture}).
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.85\linewidth]{/home/tourabi/Documents/PFE_Agriculture_IA/docs/diagrammes/architectures generales.drawio.png}
+	\caption{Architecture générale du système Agro-IA Tchad}
+	\label{fig:archi_generale}
+\end{figure}
+
+La vue en couches logicielles complète cette lecture :
+
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\linewidth]{../docs/diagrammes/architecture_couches_agro_ia}
+	\caption{Architecture en couches du cadre décisionnel Agro-IA Tchad}
+	\label{fig:architecture}
+\end{figure}
+
+\begin{itemize}[leftmargin=1.2cm]
+	\item la \textbf{couche présentation} regroupe les cinq pages
+	Streamlit (accueil, irrigation, fertilisation, maladies,
+	historique) ;
+	\item la \textbf{couche traitement} héberge les modèles d'IA et
+	la logique métier (calcul des doses, seuils NDVI par
+	culture, conseils de traitement) ;
+	\item la \textbf{couche données} assure la persistance :
+	modèles entraînés sérialisés et base SQLite de
+	l'historique ;
+	\item la \textbf{couche services externes} fournit les données
+	météorologiques temps réel et les indices de végétation.
+\end{itemize}
+
+% ══════════════════════════════════════════════════════════════════
+\section{Modèle de la base de données de l'historique}
+\label{sec:bdd_historique}
+% ══════════════════════════════════════════════════════════════════
+
+Le module Historique répond au besoin de traçabilité (BF6 à BF8).
+Le SGBD retenu est \textbf{SQLite} \cite{sqlite2024} : embarqué,
+sans serveur, sans configuration, il est parfaitement adapté à
+une application mono-utilisateur déployée sur le cloud. La base
+\texttt{historique.db} comporte trois tables indépendantes, une
+par module d'analyse.
+
+\begin{table}[H]
+	\centering
+	\caption{Structure de la table \texttt{irrigation}}
+	\label{tab:table_irr}
+	\small
+	\begin{tabularx}{\textwidth}{llX}
+		\toprule
+		\textbf{Attribut} & \textbf{Type} & \textbf{Description} \\
+		\midrule
+		id             & INTEGER & Clé primaire auto-incrémentée \\
+		date\_analyse  & TEXT    & Date et heure de l'analyse \\
+		ville, culture, stade & TEXT & Localisation et culture analysée \\
+		zone, saison, type\_sol & TEXT & Contexte agro-climatique \\
+		temperature\_moy, humidite\_air & REAL & Conditions climatiques \\
+		pluie\_7j, humidite\_sol, etp   & REAL & Variables hydriques \\
+		resultat       & TEXT    & Décision : OUI / NON \\
+		dose\_mm       & REAL    & Dose d'irrigation estimée (mm) \\
+		confiance      & REAL    & Probabilité associée (\%) \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\caption{Structure de la table \texttt{fertilisation}}
+	\label{tab:table_fert}
+	\small
+	\begin{tabularx}{\textwidth}{llX}
+		\toprule
+		\textbf{Attribut} & \textbf{Type} & \textbf{Description} \\
+		\midrule
+		id             & INTEGER & Clé primaire auto-incrémentée \\
+		date\_analyse  & TEXT    & Date et heure de l'analyse \\
+		ville, culture, type\_sol, zone & TEXT & Contexte de la parcelle \\
+		azote\_n, phosphore\_p, potassium\_k & REAL & Analyse NPK du sol \\
+		ph\_sol        & REAL    & Acidité du sol \\
+		temperature, humidite\_air, pluie & REAL & Conditions climatiques \\
+		engrais\_recommande & TEXT & Engrais prédit par XGBoost \\
+		confiance      & REAL    & Probabilité associée (\%) \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\caption{Structure de la table \texttt{maladies}}
+	\label{tab:table_mal}
+	\small
+	\begin{tabularx}{\textwidth}{llX}
+		\toprule
+		\textbf{Attribut} & \textbf{Type} & \textbf{Description} \\
+		\midrule
+		id             & INTEGER & Clé primaire auto-incrémentée \\
+		date\_analyse  & TEXT    & Date et heure de l'analyse \\
+		ville, culture & TEXT    & Contexte de la parcelle \\
+		methode        & TEXT    & CNN Photo / NDVI satellite /
+		NDVI caméra \\
+		resultat, etat & TEXT    & Classe prédite et état
+		(Saine, Stress, Malade) \\
+		confiance      & REAL    & Probabilité associée (\%) \\
+		ndvi           & REAL    & Valeur NDVI (le cas échéant) \\
+		temperature, humidite\_air, pluie\_7j & REAL & Contexte
+		climatique \\
+		traitement     & TEXT    & Conseil de traitement fourni \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+Ce modèle volontairement dénormalisé (chaque table est autonome,
+sans clé étrangère) simplifie les insertions et les lectures,
+supprime tout risque d'incohérence référentielle et facilite
+l'export CSV table par table --- des choix cohérents avec un
+usage mono-utilisateur et un volume de données modéré.
+
+\section*{Conclusion}
+\addcontentsline{toc}{section}{Conclusion}
+
+Ce chapitre a formalisé la conception du système Agro-IA Tchad :
+identification des acteurs et des problèmes, spécification de
+huit besoins fonctionnels couvrant les quatre modules,
+modélisation UML des interactions, architecture en quatre couches
+et modèle de données de l'historique. Cette conception constitue
+le socle de l'implémentation présentée au chapitre suivant.

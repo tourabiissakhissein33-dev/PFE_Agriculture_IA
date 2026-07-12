@@ -1,0 +1,95 @@
+% ══════════════════════════════════════════════════════════════════
+% RAPPORT PFE — AGRO-IA TCHAD — ENASTIC 2025/2026
+% TOURABI ISSAK HISSEIN
+% Agencement (plan de travail adopté) :
+% Page de garde · Dédicaces · Remerciements · Résumé · Abstract ·
+% Sommaire · Liste figures · Liste tableaux · Abréviations ·
+% Introduction générale · Chapitres 1-4 · Conclusion générale ·
+% Bibliographie · Annexes A-D · Table des matières
+% ══════════════════════════════════════════════════════════════════
+
+\documentclass[12pt,a4paper,oneside]{report}
+\input{preambule}
+
+\begin{document}
+	
+	% ═══════════════ ÉLÉMENTS LIMINAIRES (numérotation romaine) ══════
+	\pagenumbering{roman}
+	
+	% 1) Page de garde
+	\input{pages/page_garde}
+	
+	% 2) Dédicaces
+	\input{pages/dedicace}
+	\newpage
+	
+	% 3) Remerciements
+	\input{pages/remerciements}
+	\newpage
+	
+	% 4) Résumé + Abstract
+	\input{pages/resume}
+	\newpage
+	
+	% 5) Sommaire (chapitres seulement)
+	\chapter*{Sommaire}
+	\addcontentsline{toc}{chapter}{}
+	\markboth{Sommaire}{Sommaire}
+	{\setcounter{tocdepth}{0}\tableofcontents}
+	\newpage
+	
+	% 6) Liste des figures
+	\listoffigures
+	\addcontentsline{toc}{chapter}{Liste des figures}
+	\newpage
+	
+	% 7) Liste des tableaux
+	\listoftables
+	\addcontentsline{toc}{chapter}{Liste des tableaux}
+	\newpage
+	
+	% 8) Liste des abréviations
+	\input{pages/abreviations}
+	\newpage
+	
+	% ═══════════════ CORPS DU RAPPORT (numérotation arabe) ═══════════
+	\pagenumbering{arabic}
+	\setcounter{page}{1}
+	\setcounter{tocdepth}{3}
+	
+	% Introduction générale (6 sections)
+	\input{chapitres/introduction}
+	\newpage
+	
+	% CHAPITRE 1 — Travaux existants
+	\input{chapitres/chapitre1}
+	
+	% CHAPITRE 2 — Analyse, Conception et Modélisation UML
+	\input{chapitres/chapitre2}
+	
+	% CHAPITRE 3 — Implémentation et Développement
+	%\input{chapitres/chapitre3}
+	
+	% CHAPITRE 4 — Tests et Résultats
+	%\input{chapitres/chapitre4}
+	
+	% Conclusion générale et Perspectives
+	\input{chapitres/conclusion}
+	\newpage
+	
+	% Bibliographie
+	\printbibliography[heading=bibintoc,title={Bibliographie}]
+	\newpage
+	
+	% Annexes A à D
+	\appendix
+	\input{annexes/annexes}
+	\newpage
+	
+	% Table des matières complète (en dernier)
+	\setcounter{tocdepth}{3}
+	\chapter*{Table des Matières}
+	\markboth{Table des Matières}{Table des Matières}
+	\tableofcontents
+	
+\end{document}

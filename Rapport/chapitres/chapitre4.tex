@@ -1,0 +1,258 @@
+% ══════════════════════════════════════════════════════════════════
+% CHAPITRE 4 — RÉSULTATS ET DISCUSSION
+% Plan : Intro · 4.1 → 4.6 · Conclusion
+% ══════════════════════════════════════════════════════════════════
+
+\pagechapitre{chap:resultats}{Résultats et Discussion}
+
+\section*{Introduction}
+\addcontentsline{toc}{section}{Introduction}
+
+Ce dernier chapitre présente les résultats obtenus en appliquant
+le protocole de tests défini à la section~\ref{sec:protocole}.
+Les performances de chacun des trois modules d'IA sont d'abord
+exposées et analysées, puis les tests fonctionnels du module
+Historique sont restitués. Une discussion générale met ensuite
+ces résultats en perspective, avant la présentation du
+déploiement de l'application.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Résultats du module Irrigation}
+\label{sec:res_irrigation}
+% ══════════════════════════════════════════════════════════════════
+
+Le tableau~\ref{tab:res_irr} présente les performances du Random
+Forest sur l'ensemble de test.
+
+\begin{table}[H]
+	\centering
+	\caption{Performances du module Irrigation (Random Forest)}
+	\label{tab:res_irr}
+	\begin{tabularx}{\textwidth}{lXr}
+		\toprule
+		\textbf{Métrique} & \textbf{Description} & \textbf{Valeur} \\
+		\midrule
+		Accuracy       & Taux de prédictions correctes      & 78,51\,\% \\
+		Précision      & Fiabilité des alertes d'irrigation & 68,59\,\% \\
+		Rappel         & Besoins d'irrigation détectés      & 77,03\,\% \\
+		F1-Score       & Équilibre précision/rappel         & 72,57\,\% \\
+		AUC-ROC        & Pouvoir discriminant               & 0,8782 \\
+		CV (k=5)       & Score moyen en validation croisée  & 78,87\,\% \\
+		\midrule
+		Observations   & Jeu NASA POWER (5 villes)          & 16~435 \\
+		Arbres         & \texttt{n\_estimators}             & 100 \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+L'AUC-ROC de 0,8782 traduit une bonne capacité à distinguer les
+situations nécessitant une irrigation. Le rappel de 77\,\% ---
+privilégié par la pondération équilibrée des classes --- limite
+les faux négatifs, c'est-à-dire les stress hydriques non
+détectés, plus dommageables pour la culture qu'une irrigation
+superflue. L'écart minime entre accuracy de test (78,51\,\%) et
+score de validation croisée (78,87\,\%) confirme la stabilité du
+modèle.
+
+L'analyse de l'importance des variables place en tête l'humidité
+de l'air (0,124), le cumul de pluie sur 7 jours (0,117) et le
+cumul sur 14 jours (0,114) : la décision d'irriguer est donc
+principalement gouvernée par l'état hydrique récent de
+l'atmosphère et du sol, ce qui est agronomiquement cohérent.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Résultats du module Fertilisation}
+\label{sec:res_fertilisation}
+% ══════════════════════════════════════════════════════════════════
+
+\begin{table}[H]
+	\centering
+	\caption{Performances du module Fertilisation (XGBoost)}
+	\label{tab:res_fert}
+	\begin{tabularx}{\textwidth}{lXr}
+		\toprule
+		\textbf{Métrique} & \textbf{Description} & \textbf{Valeur} \\
+		\midrule
+		Accuracy        & Taux de recommandations correctes  & 95,42\,\% \\
+		F1-Score macro  & Moyenne des F1 des 5 classes       & 95,47\,\% \\
+		CV (k=5)        & Score moyen en validation croisée  & 97,23\,\% \\
+		Écart train/val & Contrôle du surapprentissage       & 3,75\,\% \\
+		\midrule
+		Observations    & Kaggle réel + augmentation          & 1~599 \\
+		Classes         & Types d'engrais                     & 5 \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+Les excellentes performances (tableau~\ref{tab:res_fert})
+s'expliquent par la structure du problème : chaque engrais
+possède une signature NPK distinctive que le modèle apprend
+aisément. L'analyse d'importance le confirme : le phosphore
+domine (0,439), suivi de l'azote (0,336) et du potassium
+(0,050) --- le phosphore est en effet le principal discriminant
+du DAP (18-46-0) face à l'urée (46-0-0) et au KCl (0-0-60).
+Le faible écart entraînement/validation (3,75\,\%) écarte
+l'hypothèse d'un surapprentissage malgré la part de données
+augmentées.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Résultats du module Détection des maladies}
+\label{sec:res_maladies}
+% ══════════════════════════════════════════════════════════════════
+
+\begin{table}[H]
+	\centering
+	\caption{Performances du CNN MobileNetV2 (dataset tchadien)}
+	\label{tab:res_cnn}
+	\begin{tabularx}{\textwidth}{lXr}
+		\toprule
+		\textbf{Métrique} & \textbf{Description} & \textbf{Valeur} \\
+		\midrule
+		Val. accuracy (phase 1) & Tête seule, base gelée      & 65,12\,\% \\
+		Val. accuracy (phase 2) & Après \textit{fine-tuning}  & 60,47\,\% \\
+		Accuracy (test)         & Ensemble de test final      & 52,27\,\% \\
+		F1-Score macro          & Moyenne des 10 classes      & 47,74\,\% \\
+		\midrule
+		Images                  & Dataset local tchadien      & 287 \\
+		Classes                 & 5 cultures $\times$ 2 états & 10 \\
+		Modèle TFLite           & Taille après quantification & $<$ 10 Mo \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+L'accuracy de test de 52,27\,\% --- soit plus de cinq fois le
+niveau du hasard (10\,\% pour 10 classes) --- doit être
+interprétée au regard des contraintes du dataset :
+environ 28 images par classe, très en deçà des standards du
+domaine, et des prises de vue en conditions réelles (fonds
+complexes, éclairages variables). Cette lecture est confortée
+par la littérature : le modèle de Mohanty \textit{et al.}
+\cite{mohanty2016deep}, qui atteint 99,35\,\% sur les images de
+laboratoire de PlantVillage, chute à environ 31\,\% sur des
+images de terrain. Notre résultat, obtenu directement sur des
+images de terrain tchadiennes, constitue ainsi une base
+honorable, que l'enrichissement du dataset devrait porter à
+70--80\,\%. Les classes les mieux reconnues sont
+\og Arachide saine \fg{}, \og Maïs sain \fg{} et
+\og Maïs malade \fg{} ; les confusions se concentrent sur les
+céréales à morphologie proche (mil et sorgho), dont les feuilles
+sont difficiles à distinguer même pour un \oe il non expert.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Résultats des tests du module Historique}
+\label{sec:res_historique}
+% ══════════════════════════════════════════════════════════════════
+
+Le plan de tests fonctionnels défini à la
+section~\ref{sec:protocole} a été exécuté ; le
+tableau~\ref{tab:tests_hist} en présente la synthèse.
+
+\begin{table}[H]
+	\centering
+	\caption{Résultats des tests fonctionnels du module Historique}
+	\label{tab:tests_hist}
+	\small
+	\begin{tabularx}{\textwidth}{lXc}
+		\toprule
+		\textbf{Cas de test} & \textbf{Résultat attendu} &
+		\textbf{Verdict} \\
+		\midrule
+		Sauvegarde après analyse & Une ligne insérée dans la table du
+		module concerné, horodatée & Validé \\
+		Consultation unifiée & Les analyses des trois tables
+		apparaissent triées par date décroissante & Validé \\
+		Statistiques & Compteurs par module, culture la plus analysée,
+		zone à risque et taux calculés exacts & Validé \\
+		Export CSV & Fichiers téléchargés lisibles dans un tableur,
+		encodage UTF-8, toutes colonnes présentes & Validé \\
+		Purge sélective & Suppression par module sans affecter les
+		autres tables ; purge totale effective & Validé \\
+		Persistance & Les données survivent au redémarrage local de
+		l'application & Validé \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+Une limite est à signaler : sur l'hébergement cloud gratuit, le
+système de fichiers est éphémère --- la base est réinitialisée à
+chaque redémarrage du conteneur. L'export CSV prend alors tout
+son sens, en permettant à l'utilisateur de conserver localement
+ses données ; en local, la persistance est totale.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Discussion générale des résultats}
+\label{sec:discussion}
+% ══════════════════════════════════════════════════════════════════
+
+\begin{table}[H]
+	\centering
+	\caption{Synthèse des performances des trois modules d'IA}
+	\label{tab:synthese}
+	\begin{tabularx}{\textwidth}{lXrr}
+		\toprule
+		\textbf{Module} & \textbf{Algorithme} & \textbf{Accuracy} &
+		\textbf{F1-Score} \\
+		\midrule
+		Irrigation    & Random Forest    & 78,51\,\% & 72,57\,\% \\
+		Fertilisation & XGBoost          & 95,42\,\% & 95,47\,\% \\
+		Maladies      & CNN MobileNetV2  & 52,27\,\% & 47,74\,\% \\
+		\bottomrule
+	\end{tabularx}
+\end{table}
+
+Trois enseignements se dégagent du tableau~\ref{tab:synthese}.
+D'abord, l'adéquation entre algorithme et nature des données est
+déterminante : sur données tabulaires abondantes (irrigation) ou
+bien structurées (fertilisation), les méthodes d'ensemble
+atteignent des niveaux directement exploitables ; sur images de
+terrain en faible quantité, l'apprentissage profond reste
+pénalisé malgré le transfert d'apprentissage. Ensuite, l'objectif
+de fiabilité fixé au chapitre 2 (accuracy $\geq 75\,\%$) est
+atteint pour l'irrigation et largement dépassé pour la
+fertilisation. Enfin, la principale marge de progression ---
+le module maladies --- relève de la donnée plus que du modèle :
+c'est l'enrichissement du dataset local qui conditionnera le
+saut de performance.
+
+% ══════════════════════════════════════════════════════════════════
+\section{Déploiement de l'application}
+\label{sec:deploiement}
+% ══════════════════════════════════════════════════════════════════
+
+\subsection{Déploiement local}
+
+En environnement local (Ubuntu 24.04, Python 3.12),
+l'application se lance par la commande
+\texttt{streamlit run app.py} après installation des dépendances
+du fichier \texttt{requirements.txt} dans un environnement
+virtuel. L'ensemble des modules, y compris le CNN via
+\texttt{tflite-runtime}, y est opérationnel.
+
+\subsection{Déploiement sur Streamlit Cloud}
+
+Le code source est hébergé sur GitHub et déployé en continu sur
+Streamlit Cloud \cite{agroiatchad2026} : chaque
+\texttt{git push} déclenche la reconstruction de l'application.
+Deux adaptations ont été nécessaires : le verrouillage de la
+version de Python à 3.11 (fichier \texttt{.python-version}),
+et le remplacement de TensorFlow --- indisponible pour les
+versions récentes de Python de la plateforme --- par la
+bibliothèque légère \texttt{tflite-runtime} pour l'inférence du
+CNN. L'application est accessible publiquement à l'adresse :
+
+\begin{center}
+	\url{https://agro-ia-tchad.streamlit.app}
+\end{center}
+
+\section*{Conclusion}
+\addcontentsline{toc}{section}{Conclusion}
+
+Les résultats confirment l'atteinte des objectifs : le module
+Fertilisation excelle (95,42\,\%), le module Irrigation dépasse
+le seuil de fiabilité fixé (78,51\,\%, AUC 0,878), le module
+Maladies fournit une base prometteuse sur images de terrain
+réelles (52,27\,\%), et le module Historique remplit
+intégralement son cahier des charges de traçabilité et d'export.
+L'application, déployée et accessible en ligne, matérialise
+l'aboutissement opérationnel du projet. La conclusion générale
+qui suit en dresse le bilan et trace les perspectives.

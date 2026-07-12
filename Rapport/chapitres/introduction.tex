@@ -1,0 +1,216 @@
+% ══════════════════════════════════════════════════════════════════
+% INTRODUCTION GÉNÉRALE — 6 sections (plan de travail)
+% ══════════════════════════════════════════════════════════════════
+
+\chapter*{Introduction Générale}
+\addcontentsline{toc}{chapter}{Introduction Générale}
+\markboth{Introduction Générale}{Introduction Générale}
+
+% ── 1. Contexte général ───────────────────────────────────────────
+\section*{1. Contexte général}
+\addcontentsline{toc}{section}{1. Contexte général}
+
+L'agriculture occupe une place centrale dans l'économie tchadienne :
+elle contribue à près de 20\,\% du Produit Intérieur Brut et fait
+vivre plus de 80\,\% de la population rurale
+\cite{banquemondiale2023}. Les principales cultures du pays --- le
+mil (\textit{Pennisetum glaucum}), le sorgho (\textit{Sorghum
+	bicolor}), l'arachide (\textit{Arachis hypogaea}), le maïs
+(\textit{Zea mays}) et le coton (\textit{Gossypium hirsutum}) ---
+sont pratiquées majoritairement en régime pluvial, dans des
+conditions climatiques difficiles propres aux zones sahélienne et
+soudanienne : forte variabilité des précipitations, températures
+élevées et épisodes de sécheresse récurrents.
+
+\medskip
+
+Parallèlement, l'essor de l'Intelligence Artificielle (IA) ouvre
+des perspectives inédites pour l'agriculture de précision. Les
+techniques d'apprentissage automatique permettent aujourd'hui
+d'exploiter des volumes importants de données climatiques,
+pédologiques et visuelles afin de produire des recommandations
+agronomiques personnalisées et en temps réel
+\cite{liakos2018machine}. Ces avancées représentent une opportunité
+majeure pour les pays en développement, où l'encadrement agronomique
+de proximité reste insuffisant.
+
+% ── 2. Problématique ──────────────────────────────────────────────
+\section*{2. Problématique}
+\addcontentsline{toc}{section}{2. Problématique}
+
+Malgré son poids économique, l'agriculture tchadienne demeure peu
+productive. Les agriculteurs font face à plusieurs obstacles
+majeurs : la rareté des agronomes qualifiés en zone rurale,
+l'absence d'accès aux informations météorologiques en temps réel,
+la difficulté à détecter précocement les maladies des cultures,
+et une gestion souvent inadaptée des intrants --- eau d'irrigation
+et engrais --- entraînant des pertes de rendement et des coûts
+inutiles.
+
+\medskip
+
+Face à ce constat, la question centrale de ce travail est la
+suivante : \textbf{comment concevoir un outil d'aide à la décision
+	accessible, précis et adapté aux conditions locales, capable
+	d'accompagner l'agriculteur tchadien dans le suivi quotidien de
+	ses parcelles ?}
+
+\medskip
+
+Cette problématique se décline en quatre questions opérationnelles :
+
+\begin{itemize}[leftmargin=1.2cm]
+	\item Comment prédire le besoin en irrigation d'une parcelle à
+	partir des conditions climatiques locales en temps réel ?
+	\item Comment recommander l'engrais optimal selon les
+	caractéristiques du sol (NPK, pH) et le climat ?
+	\item Comment détecter automatiquement les maladies des cultures
+	à partir d'une photographie de feuille ou d'un indice de
+	végétation ?
+	\item Comment assurer la traçabilité des analyses effectuées
+	afin de permettre un suivi historique des parcelles ?
+\end{itemize}
+
+% ── 3. Objectifs du travail ───────────────────────────────────────
+\section*{3. Objectifs du travail}
+\addcontentsline{toc}{section}{3. Objectifs du travail}
+
+L'objectif général de ce projet est de \textbf{concevoir et
+	d'implémenter un cadre décisionnel basé sur l'Intelligence
+	Artificielle pour l'optimisation du suivi parcellaire agricole au
+	Tchad}, matérialisé par une application web dénommée
+\textbf{Agro-IA Tchad}.
+
+\medskip
+
+Cet objectif général se décompose en cinq objectifs spécifiques :
+
+\begin{enumerate}[leftmargin=1.2cm]
+	\item Développer un \textbf{module de prédiction du besoin en
+		irrigation} fondé sur l'algorithme Random Forest, entraîné
+	sur des données climatiques réelles de la base NASA POWER
+	couvrant cinq villes tchadiennes sur la période 2015--2023 ;
+	\item Concevoir un \textbf{module de recommandation d'engrais}
+	utilisant l'algorithme XGBoost à partir des paramètres NPK
+	du sol et des conditions climatiques ;
+	\item Implémenter un \textbf{module de détection des maladies}
+	combinant un réseau de neurones convolutif (CNN MobileNetV2)
+	appliqué aux photographies de feuilles, et l'analyse
+	d'indices de végétation NDVI obtenus par satellite
+	Sentinel-2 ou estimés par caméra smartphone ;
+	\item Mettre en place un \textbf{module Historique} assurant la
+	persistance de toutes les analyses dans une base de données
+	SQLite, avec statistiques et export CSV ;
+	\item \textbf{Déployer l'application} sur une plateforme cloud
+	accessible gratuitement depuis tout navigateur web.
+\end{enumerate}
+
+% ── 4. Motivation et intérêt du sujet ─────────────────────────────
+\section*{4. Motivation et intérêt du sujet}
+\addcontentsline{toc}{section}{4. Motivation et intérêt du sujet}
+
+Le choix de ce sujet est motivé par un triple intérêt.
+
+\medskip
+
+\textbf{Sur le plan scientifique}, ce travail explore l'application
+concrète de plusieurs familles d'algorithmes d'apprentissage
+automatique --- forêts aléatoires, gradient boosting et réseaux de
+neurones convolutifs --- à des données agricoles réelles et
+hétérogènes, dans un contexte de ressources limitées (peu de
+données annotées localement).
+
+\medskip
+
+\textbf{Sur le plan socio-économique}, un outil d'aide à la décision
+gratuit et accessible peut contribuer à améliorer les rendements
+agricoles, à réduire le gaspillage d'eau et d'engrais, et à limiter
+les pertes de récoltes dues aux maladies, avec un impact direct sur
+la sécurité alimentaire des ménages ruraux tchadiens.
+
+\medskip
+
+\textbf{Sur le plan personnel}, ce projet est l'occasion de mettre
+en \oe uvre l'ensemble des compétences acquises durant la formation
+de Licence à l'ENASTIC --- programmation, bases de données, génie
+logiciel et intelligence artificielle --- au service d'une
+problématique nationale concrète.
+
+% ── 5. Méthodologie adoptée ───────────────────────────────────────
+\section*{5. Méthodologie adoptée}
+\addcontentsline{toc}{section}{5. Méthodologie adoptée}
+
+Pour atteindre les objectifs fixés, une démarche en quatre phases
+a été suivie.
+
+\medskip
+
+La \textbf{première phase} a été consacrée à la collecte et au
+prétraitement des données : extraction de 16~435 observations
+climatiques depuis l'API NASA POWER, constitution d'un jeu de
+données de fertilisation de 1~599 observations, et création d'un
+dataset local de 287 images de feuilles de cultures tchadiennes
+réparties en 10 classes.
+
+\medskip
+
+La \textbf{deuxième phase} a porté sur l'entraînement et
+l'optimisation des modèles d'IA sur la plateforme Kaggle (GPU
+Tesla T4) : Random Forest pour l'irrigation, XGBoost pour la
+fertilisation et CNN MobileNetV2 par transfert d'apprentissage
+pour la détection des maladies, avec conversion finale au format
+TensorFlow Lite.
+
+\medskip
+
+La \textbf{troisième phase} a concerné le développement de
+l'application web avec le framework Streamlit : intégration des
+modèles, de l'API météorologique Open-Meteo et de la base de
+données SQLite pour le module Historique.
+
+\medskip
+
+Enfin, la \textbf{quatrième phase} a été dédiée aux tests,
+à l'évaluation des performances de chaque module et au déploiement
+de l'application sur Streamlit Cloud.
+
+% ── 6. Structure du mémoire ───────────────────────────────────────
+\section*{6. Structure du mémoire}
+\addcontentsline{toc}{section}{6. Structure du mémoire}
+
+Outre la présente introduction et la conclusion générale, ce
+mémoire s'articule autour de quatre chapitres.
+
+\medskip
+
+Le \textbf{Chapitre 1 --- Travaux existants} présente l'agriculture
+de précision, la nature des données agricoles, les techniques d'IA
+appliquées à l'agriculture, ainsi qu'une analyse des solutions
+existantes permettant de positionner notre contribution.
+
+\medskip
+
+Le \textbf{Chapitre 2 --- Analyse, Conception et Modélisation UML}
+expose l'analyse du problème, la spécification des besoins, la
+modélisation UML du système, l'architecture du cadre décisionnel
+et le modèle de la base de données de l'historique.
+
+\medskip
+
+Le \textbf{Chapitre 3 --- Implémentation et Développement} détaille
+l'environnement de développement, le prétraitement des données,
+la réalisation des trois modules d'IA, du module Historique et de
+l'application web.
+
+\medskip
+
+Le \textbf{Chapitre 4 --- Tests et Résultats} présente le protocole
+de tests, les résultats obtenus pour chaque module, la validation
+du module Historique, une discussion générale et le déploiement
+de l'application.
+
+\medskip
+
+Le mémoire s'achève par une \textbf{conclusion générale} qui
+dresse la synthèse des travaux, en expose les limites et propose
+des perspectives d'amélioration.
