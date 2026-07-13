@@ -9,96 +9,96 @@
 \contentsline {chapter}{Liste des abréviations}{ix}{chapter*.9}%
 \contentsline {chapter}{Introduction Générale}{1}{chapter*.10}%
 \contentsline {section}{1. Contexte général}{1}{section*.11}%
-\contentsline {section}{2. Problématique}{1}{section*.11}%
-\contentsline {section}{3. Objectifs du travail}{2}{section*.11}%
-\contentsline {section}{4. Motivation et intérêt du sujet}{2}{Item.5}%
-\contentsline {section}{5. Méthodologie adoptée}{3}{Item.5}%
-\contentsline {section}{6. Structure du mémoire}{3}{Item.5}%
-\contentsline {chapter}{\numberline {1}Travaux existants}{5}{chapter.1}%
-\contentsline {section}{Introduction}{5}{section*.12}%
-\contentsline {section}{\numberline {1.1}Agriculture de précision et suivi parcellaire}{5}{section.1.1}%
-\contentsline {subsection}{\numberline {1.1.1}Définition et principes}{5}{subsection.1.1.1}%
-\contentsline {subsection}{\numberline {1.1.2}Le suivi parcellaire}{5}{subsection.1.1.2}%
-\contentsline {subsection}{\numberline {1.1.3}Contexte agricole du Tchad}{6}{subsection.1.1.3}%
-\contentsline {subsection}{\numberline {1.1.4}Défis du suivi parcellaire en zone sahélienne}{6}{subsection.1.1.4}%
-\contentsline {section}{\numberline {1.2}Données agricoles : nature et hétérogénéité}{6}{section.1.2}%
-\contentsline {subsection}{\numberline {1.2.1}Données climatiques}{6}{subsection.1.2.1}%
-\contentsline {subsection}{\numberline {1.2.2}Données pédologiques}{7}{subsection.1.2.2}%
-\contentsline {subsection}{\numberline {1.2.3}Données visuelles et télédétection}{7}{subsection.1.2.3}%
-\contentsline {subsection}{\numberline {1.2.4}L'indice de végétation NDVI}{7}{subsection.1.2.4}%
-\contentsline {section}{\numberline {1.3}Intelligence artificielle appliquée à l'agriculture}{7}{section.1.3}%
-\contentsline {subsection}{\numberline {1.3.1}Apprentissage automatique classique}{7}{subsection.1.3.1}%
-\contentsline {subsection}{\numberline {1.3.2}Apprentissage profond et vision par ordinateur}{8}{subsection.1.3.2}%
-\contentsline {subsection}{\numberline {1.3.3}Transfert d'apprentissage et modèles légers}{8}{subsection.1.3.3}%
-\contentsline {section}{\numberline {1.4}Analyse des solutions existantes et positionnement}{8}{section.1.4}%
-\contentsline {subsection}{\numberline {1.4.1}Solutions existantes}{8}{subsection.1.4.1}%
-\contentsline {subsection}{\numberline {1.4.2}Limites des solutions existantes}{8}{subsection.1.4.2}%
-\contentsline {subsection}{\numberline {1.4.3}Positionnement de notre contribution}{9}{subsection.1.4.3}%
-\contentsline {section}{Conclusion}{9}{subsection.1.4.3}%
-\contentsline {chapter}{\numberline {2}Analyse, Conception et Modélisation UML}{10}{chapter.2}%
-\contentsline {section}{Introduction}{10}{section*.14}%
-\contentsline {section}{\numberline {2.1}Analyse du problème et identification des acteurs}{10}{section.2.1}%
-\contentsline {subsection}{\numberline {2.1.1}Analyse du problème}{10}{subsection.2.1.1}%
-\contentsline {subsection}{\numberline {2.1.2}Identification des acteurs}{11}{subsection.2.1.2}%
-\contentsline {section}{\numberline {2.2}Spécification des besoins}{11}{section.2.2}%
-\contentsline {subsection}{\numberline {2.2.1}Besoins fonctionnels}{11}{subsection.2.2.1}%
-\contentsline {subsection}{\numberline {2.2.2}Besoins non fonctionnels}{11}{subsection.2.2.2}%
-\contentsline {section}{\numberline {2.3}Modélisation UML du système}{12}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Diagramme de contexte}{12}{subsection.2.3.1}%
-\contentsline {subsection}{\numberline {2.3.2}Diagramme de cas d'utilisation}{13}{subsection.2.3.2}%
-\contentsline {subsection}{\numberline {2.3.3}Diagramme de séquence --- analyse d'une parcelle}{14}{subsection.2.3.3}%
-\contentsline {subsection}{\numberline {2.3.4}Diagramme d'activités --- génération d'une recommandation}{14}{subsection.2.3.4}%
-\contentsline {section}{\numberline {2.4}Architecture du cadre décisionnel}{15}{section.2.4}%
-\contentsline {section}{\numberline {2.5}Modèle de la base de données de l'historique}{17}{section.2.5}%
-\contentsline {section}{Conclusion}{18}{table.caption.24}%
-\contentsline {chapter}{\numberline {3}Implémentation et Tests}{19}{chapter.3}%
-\contentsline {section}{Introduction}{19}{section*.25}%
-\contentsline {section}{\numberline {3.1}Environnement de développement}{19}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Collecte et prétraitement des données}{20}{section.3.2}%
-\contentsline {subsection}{\numberline {3.2.1}Données d'irrigation --- NASA POWER}{20}{subsection.3.2.1}%
-\contentsline {subsection}{\numberline {3.2.2}Données de fertilisation}{21}{subsection.3.2.2}%
-\contentsline {subsection}{\numberline {3.2.3}Dataset local d'images --- maladies}{21}{subsection.3.2.3}%
-\contentsline {section}{\numberline {3.3}Module IA --- Irrigation}{21}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}Choix de l'algorithme Random Forest}{21}{subsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.3.2}Entraînement et hyperparamètres}{21}{subsection.3.3.2}%
-\contentsline {subsection}{\numberline {3.3.3}Intégration dans l'application}{22}{subsection.3.3.3}%
-\contentsline {section}{\numberline {3.4}Module IA --- Fertilisation}{22}{section.3.4}%
-\contentsline {subsection}{\numberline {3.4.1}Choix de l'algorithme XGBoost}{22}{subsection.3.4.1}%
-\contentsline {subsection}{\numberline {3.4.2}Entrées et sorties du module}{22}{subsection.3.4.2}%
-\contentsline {section}{\numberline {3.5}Module IA --- Détection des maladies}{23}{section.3.5}%
-\contentsline {subsection}{\numberline {3.5.1}Architecture CNN MobileNetV2 et transfert d'apprentissage}{23}{subsection.3.5.1}%
-\contentsline {subsection}{\numberline {3.5.2}Conversion au format TensorFlow Lite}{23}{subsection.3.5.2}%
-\contentsline {subsection}{\numberline {3.5.3}Analyse NDVI : satellite et caméra smartphone}{23}{subsection.3.5.3}%
-\contentsline {section}{\numberline {3.6}Module Historique --- Persistance SQLite et export CSV}{24}{section.3.6}%
-\contentsline {subsection}{\numberline {3.6.1}Implémentation de la couche d'accès aux données}{24}{subsection.3.6.1}%
-\contentsline {subsection}{\numberline {3.6.2}Consultation, statistiques et export}{24}{subsection.3.6.2}%
-\contentsline {section}{\numberline {3.7}Développement de l'application web}{25}{section.3.7}%
-\contentsline {subsection}{\numberline {3.7.1}Framework Streamlit}{25}{subsection.3.7.1}%
-\contentsline {subsection}{\numberline {3.7.2}Intégration de la météo temps réel}{25}{subsection.3.7.2}%
-\contentsline {subsection}{\numberline {3.7.3}Interface et expérience utilisateur}{25}{subsection.3.7.3}%
-\contentsline {section}{\numberline {3.8}Protocole de tests}{25}{section.3.8}%
-\contentsline {subsection}{\numberline {3.8.1}Métriques d'évaluation des modèles}{25}{subsection.3.8.1}%
-\contentsline {subsection}{\numberline {3.8.2}Démarche de validation des modèles}{26}{subsection.3.8.2}%
-\contentsline {subsection}{\numberline {3.8.3}Plan de tests fonctionnels de l'application}{26}{subsection.3.8.3}%
-\contentsline {section}{Conclusion}{26}{subsection.3.8.3}%
-\contentsline {chapter}{\numberline {4}Résultats et Discussion}{27}{chapter.4}%
-\contentsline {section}{Introduction}{27}{section*.27}%
-\contentsline {section}{\numberline {4.1}Résultats du module Irrigation}{27}{section.4.1}%
-\contentsline {section}{\numberline {4.2}Résultats du module Fertilisation}{28}{section.4.2}%
-\contentsline {section}{\numberline {4.3}Résultats du module Détection des maladies}{29}{section.4.3}%
-\contentsline {section}{\numberline {4.4}Résultats des tests du module Historique}{29}{section.4.4}%
-\contentsline {section}{\numberline {4.5}Discussion générale des résultats}{30}{section.4.5}%
-\contentsline {section}{\numberline {4.6}Déploiement de l'application}{31}{section.4.6}%
-\contentsline {subsection}{\numberline {4.6.1}Déploiement local}{31}{subsection.4.6.1}%
-\contentsline {subsection}{\numberline {4.6.2}Déploiement sur Streamlit Cloud}{31}{subsection.4.6.2}%
-\contentsline {section}{Conclusion}{31}{subsection.4.6.2}%
-\contentsline {chapter}{Conclusion Générale et Perspectives}{32}{chapter*.33}%
-\contentsline {section}{Synthèse des travaux}{32}{section*.34}%
-\contentsline {section}{Limites rencontrées}{33}{section*.34}%
-\contentsline {section}{Perspectives d'amélioration}{33}{section*.34}%
-\contentsline {chapter}{Bibliographie}{34}{chapter*.35}%
-\contentsline {chapter}{\numberline {A}Jeux de données utilisés}{36}{appendix.A}%
-\contentsline {chapter}{\numberline {B}Codes sources principaux}{38}{appendix.B}%
-\contentsline {chapter}{\numberline {C}Diagrammes UML complets}{40}{appendix.C}%
-\contentsline {chapter}{\numberline {D}Captures d'écran de l'application}{41}{appendix.D}%
-\contentsline {chapter}{Table des matières}{44}{section*.44}%
+\contentsline {section}{2. Problématique}{1}{section*.12}%
+\contentsline {section}{3. Objectifs du travail}{2}{section*.13}%
+\contentsline {section}{4. Motivation et intérêt du sujet}{2}{section*.14}%
+\contentsline {section}{5. Méthodologie adoptée}{3}{section*.15}%
+\contentsline {section}{6. Structure du mémoire}{3}{section*.16}%
+\contentsline {chapter}{\numberline {1}Travaux existants}{4}{chapter.1}%
+\contentsline {section}{Introduction}{4}{section*.17}%
+\contentsline {section}{\numberline {1.1}Agriculture de précision et suivi parcellaire}{4}{section.1.1}%
+\contentsline {subsection}{\numberline {1.1.1}Définition et principes}{4}{subsection.1.1.1}%
+\contentsline {subsection}{\numberline {1.1.2}Le suivi parcellaire}{4}{subsection.1.1.2}%
+\contentsline {subsection}{\numberline {1.1.3}Contexte agricole du Tchad}{5}{subsection.1.1.3}%
+\contentsline {subsection}{\numberline {1.1.4}Défis du suivi parcellaire en zone sahélienne}{5}{subsection.1.1.4}%
+\contentsline {section}{\numberline {1.2}Données agricoles : nature et hétérogénéité}{5}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Données climatiques}{5}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}Données pédologiques}{5}{subsection.1.2.2}%
+\contentsline {subsection}{\numberline {1.2.3}Données visuelles et télédétection}{6}{subsection.1.2.3}%
+\contentsline {subsection}{\numberline {1.2.4}L'indice de végétation NDVI}{6}{subsection.1.2.4}%
+\contentsline {section}{\numberline {1.3}Intelligence artificielle appliquée à l'agriculture}{6}{section.1.3}%
+\contentsline {subsection}{\numberline {1.3.1}Apprentissage automatique classique}{6}{subsection.1.3.1}%
+\contentsline {subsection}{\numberline {1.3.2}Apprentissage profond et vision par ordinateur}{6}{subsection.1.3.2}%
+\contentsline {subsection}{\numberline {1.3.3}Transfert d'apprentissage et modèles légers}{7}{subsection.1.3.3}%
+\contentsline {section}{\numberline {1.4}Analyse des solutions existantes et positionnement}{7}{section.1.4}%
+\contentsline {subsection}{\numberline {1.4.1}Solutions existantes}{7}{subsection.1.4.1}%
+\contentsline {subsection}{\numberline {1.4.2}Limites des solutions existantes}{7}{subsection.1.4.2}%
+\contentsline {subsection}{\numberline {1.4.3}Positionnement de notre contribution}{8}{subsection.1.4.3}%
+\contentsline {section}{Conclusion}{8}{section*.19}%
+\contentsline {chapter}{\numberline {2}Analyse, Conception et Modélisation UML}{9}{chapter.2}%
+\contentsline {section}{Introduction}{9}{section*.20}%
+\contentsline {section}{\numberline {2.1}Analyse du problème et identification des acteurs}{9}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Analyse du problème}{9}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}Identification des acteurs}{9}{subsection.2.1.2}%
+\contentsline {section}{\numberline {2.2}Spécification des besoins}{10}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Besoins fonctionnels}{10}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Besoins non fonctionnels}{10}{subsection.2.2.2}%
+\contentsline {section}{\numberline {2.3}Modélisation UML du système}{11}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Diagramme de contexte}{11}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Diagramme de cas d'utilisation}{12}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Diagramme de séquence --- analyse d'une parcelle}{13}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.4}Diagramme d'activités --- génération d'une recommandation}{13}{subsection.2.3.4}%
+\contentsline {section}{\numberline {2.4}Architecture du cadre décisionnel}{14}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Modèle de la base de données de l'historique}{16}{section.2.5}%
+\contentsline {section}{Conclusion}{17}{section*.31}%
+\contentsline {chapter}{\numberline {3}Implémentation et Tests}{18}{chapter.3}%
+\contentsline {section}{Introduction}{18}{section*.32}%
+\contentsline {section}{\numberline {3.1}Environnement de développement}{18}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Collecte et prétraitement des données}{19}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Données d'irrigation --- NASA POWER}{19}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Données de fertilisation}{19}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Dataset local d'images --- maladies}{20}{subsection.3.2.3}%
+\contentsline {section}{\numberline {3.3}Module IA --- Irrigation}{20}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Choix de l'algorithme Random Forest}{20}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Entraînement et hyperparamètres}{20}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}Intégration dans l'application}{20}{subsection.3.3.3}%
+\contentsline {section}{\numberline {3.4}Module IA --- Fertilisation}{21}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Choix de l'algorithme XGBoost}{21}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Entrées et sorties du module}{21}{subsection.3.4.2}%
+\contentsline {section}{\numberline {3.5}Module IA --- Détection des maladies}{21}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Architecture CNN MobileNetV2 et transfert d'apprentissage}{21}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}Conversion au format TensorFlow Lite}{21}{subsection.3.5.2}%
+\contentsline {subsection}{\numberline {3.5.3}Analyse NDVI : satellite et caméra smartphone}{22}{subsection.3.5.3}%
+\contentsline {section}{\numberline {3.6}Module Historique --- Persistance SQLite et export CSV}{22}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Implémentation de la couche d'accès aux données}{22}{subsection.3.6.1}%
+\contentsline {subsection}{\numberline {3.6.2}Consultation, statistiques et export}{23}{subsection.3.6.2}%
+\contentsline {section}{\numberline {3.7}Développement de l'application web}{23}{section.3.7}%
+\contentsline {subsection}{\numberline {3.7.1}Framework Streamlit}{23}{subsection.3.7.1}%
+\contentsline {subsection}{\numberline {3.7.2}Intégration de la météo temps réel}{23}{subsection.3.7.2}%
+\contentsline {subsection}{\numberline {3.7.3}Interface et expérience utilisateur}{23}{subsection.3.7.3}%
+\contentsline {section}{\numberline {3.8}Protocole de tests}{24}{section.3.8}%
+\contentsline {subsection}{\numberline {3.8.1}Métriques d'évaluation des modèles}{24}{subsection.3.8.1}%
+\contentsline {subsection}{\numberline {3.8.2}Démarche de validation des modèles}{24}{subsection.3.8.2}%
+\contentsline {subsection}{\numberline {3.8.3}Plan de tests fonctionnels de l'application}{24}{subsection.3.8.3}%
+\contentsline {section}{Conclusion}{24}{section*.34}%
+\contentsline {chapter}{\numberline {4}Résultats et Discussion}{25}{chapter.4}%
+\contentsline {section}{Introduction}{25}{section*.35}%
+\contentsline {section}{\numberline {4.1}Résultats du module Irrigation}{25}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Résultats du module Fertilisation}{26}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Résultats du module Détection des maladies}{26}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Résultats des tests du module Historique}{27}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Discussion générale des résultats}{27}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Déploiement de l'application}{28}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Déploiement local}{28}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.2}Déploiement sur Streamlit Cloud}{28}{subsection.4.6.2}%
+\contentsline {section}{Conclusion}{28}{section*.41}%
+\contentsline {chapter}{Conclusion Générale et Perspectives}{29}{chapter*.42}%
+\contentsline {section}{Synthèse des travaux}{29}{section*.43}%
+\contentsline {section}{Limites rencontrées}{29}{section*.44}%
+\contentsline {section}{Perspectives d'amélioration}{30}{section*.45}%
+\contentsline {chapter}{Bibliographie}{31}{chapter*.46}%
+\contentsline {chapter}{\numberline {A}Jeux de données utilisés}{33}{appendix.A}%
+\contentsline {chapter}{\numberline {B}Codes sources principaux}{35}{appendix.B}%
+\contentsline {chapter}{\numberline {C}Diagrammes UML complets}{37}{appendix.C}%
+\contentsline {chapter}{\numberline {D}Captures d'écran de l'application}{38}{appendix.D}%
+\contentsline {chapter}{Table des matières}{41}{section*.61}%

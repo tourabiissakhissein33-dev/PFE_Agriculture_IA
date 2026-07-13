@@ -1,20 +1,20 @@
 \babel@toc {french}{}\relax 
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces Diagramme de contexte du système Agro-IA Tchad}}{12}{figure.caption.16}%
-\contentsline {figure}{\numberline {2.2}{\ignorespaces Diagramme de cas d'utilisation global avec services externes}}{13}{figure.caption.17}%
-\contentsline {figure}{\numberline {2.3}{\ignorespaces Diagramme de séquence --- analyse d'une parcelle}}{14}{figure.caption.18}%
-\contentsline {figure}{\numberline {2.4}{\ignorespaces Diagramme d'activités --- génération d'une recommandation}}{15}{figure.caption.19}%
-\contentsline {figure}{\numberline {2.5}{\ignorespaces Architecture générale du système Agro-IA Tchad}}{16}{figure.caption.20}%
-\contentsline {figure}{\numberline {2.6}{\ignorespaces Architecture en couches du cadre décisionnel Agro-IA Tchad}}{16}{figure.caption.21}%
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Diagramme de contexte du système Agro-IA Tchad}}{11}{figure.caption.22}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Diagramme de cas d'utilisation global avec services externes}}{12}{figure.caption.23}%
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Diagramme de séquence --- analyse d'une parcelle}}{13}{figure.caption.24}%
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Diagramme d'activités --- génération d'une recommandation}}{14}{figure.caption.25}%
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Architecture générale du système Agro-IA Tchad}}{15}{figure.caption.26}%
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Architecture en couches du cadre décisionnel Agro-IA Tchad}}{15}{figure.caption.27}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {D.1}{\ignorespaces Page d'accueil de l'application Agro-IA Tchad}}{41}{figure.caption.39}%
-\contentsline {figure}{\numberline {D.2}{\ignorespaces Module Irrigation --- analyse et recommandation}}{42}{figure.caption.40}%
-\contentsline {figure}{\numberline {D.3}{\ignorespaces Module Fertilisation --- recommandation d'engrais}}{42}{figure.caption.41}%
-\contentsline {figure}{\numberline {D.4}{\ignorespaces Module Détection des maladies --- diagnostic par photo}}{43}{figure.caption.42}%
-\contentsline {figure}{\numberline {D.5}{\ignorespaces Module Historique --- consultation et export}}{43}{figure.caption.43}%
+\contentsline {figure}{\numberline {D.1}{\ignorespaces Page d'accueil de l'application Agro-IA Tchad}}{38}{figure.caption.56}%
+\contentsline {figure}{\numberline {D.2}{\ignorespaces Module Irrigation --- analyse et recommandation}}{39}{figure.caption.57}%
+\contentsline {figure}{\numberline {D.3}{\ignorespaces Module Fertilisation --- recommandation d'engrais}}{39}{figure.caption.58}%
+\contentsline {figure}{\numberline {D.4}{\ignorespaces Module Détection des maladies --- diagnostic par photo}}{40}{figure.caption.59}%
+\contentsline {figure}{\numberline {D.5}{\ignorespaces Module Historique --- consultation et export}}{40}{figure.caption.60}%

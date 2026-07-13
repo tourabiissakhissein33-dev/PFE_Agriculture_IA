@@ -1,23 +1,23 @@
 \babel@toc {french}{}\relax 
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {1.1}{\ignorespaces Comparaison des solutions existantes avec Agro-IA Tchad}}{8}{table.caption.13}%
+\contentsline {table}{\numberline {1.1}{\ignorespaces Comparaison des solutions existantes avec Agro-IA Tchad}}{7}{table.caption.18}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {2.1}{\ignorespaces Besoins fonctionnels du système Agro-IA Tchad}}{11}{table.caption.15}%
-\contentsline {table}{\numberline {2.2}{\ignorespaces Structure de la table \texttt {irrigation}}}{17}{table.caption.22}%
-\contentsline {table}{\numberline {2.3}{\ignorespaces Structure de la table \texttt {fertilisation}}}{17}{table.caption.23}%
-\contentsline {table}{\numberline {2.4}{\ignorespaces Structure de la table \texttt {maladies}}}{18}{table.caption.24}%
+\contentsline {table}{\numberline {2.1}{\ignorespaces Besoins fonctionnels du système Agro-IA Tchad}}{10}{table.caption.21}%
+\contentsline {table}{\numberline {2.2}{\ignorespaces Structure de la table \texttt {irrigation}}}{16}{table.caption.28}%
+\contentsline {table}{\numberline {2.3}{\ignorespaces Structure de la table \texttt {fertilisation}}}{16}{table.caption.29}%
+\contentsline {table}{\numberline {2.4}{\ignorespaces Structure de la table \texttt {maladies}}}{17}{table.caption.30}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces Environnements de développement utilisés}}{20}{table.caption.26}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces Environnements de développement utilisés}}{18}{table.caption.33}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces Performances du module Irrigation (Random Forest)}}{27}{table.caption.28}%
-\contentsline {table}{\numberline {4.2}{\ignorespaces Performances du module Fertilisation (XGBoost)}}{28}{table.caption.29}%
-\contentsline {table}{\numberline {4.3}{\ignorespaces Performances du CNN MobileNetV2 (dataset tchadien)}}{29}{table.caption.30}%
-\contentsline {table}{\numberline {4.4}{\ignorespaces Résultats des tests fonctionnels du module Historique}}{30}{table.caption.31}%
-\contentsline {table}{\numberline {4.5}{\ignorespaces Synthèse des performances des trois modules d'IA}}{30}{table.caption.32}%
+\contentsline {table}{\numberline {4.1}{\ignorespaces Performances du module Irrigation (Random Forest)}}{25}{table.caption.36}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces Performances du module Fertilisation (XGBoost)}}{26}{table.caption.37}%
+\contentsline {table}{\numberline {4.3}{\ignorespaces Performances du CNN MobileNetV2 (dataset tchadien)}}{26}{table.caption.38}%
+\contentsline {table}{\numberline {4.4}{\ignorespaces Résultats des tests fonctionnels du module Historique}}{27}{table.caption.39}%
+\contentsline {table}{\numberline {4.5}{\ignorespaces Synthèse des performances des trois modules d'IA}}{27}{table.caption.40}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {A.1}{\ignorespaces Caractéristiques du dataset d'irrigation}}{36}{table.caption.36}%
-\contentsline {table}{\numberline {A.2}{\ignorespaces Caractéristiques du dataset de fertilisation}}{37}{table.caption.37}%
-\contentsline {table}{\numberline {A.3}{\ignorespaces Distribution du dataset local tchadien (287 images)}}{37}{table.caption.38}%
+\contentsline {table}{\numberline {A.1}{\ignorespaces Caractéristiques du dataset d'irrigation}}{33}{table.caption.48}%
+\contentsline {table}{\numberline {A.2}{\ignorespaces Caractéristiques du dataset de fertilisation}}{33}{table.caption.50}%
+\contentsline {table}{\numberline {A.3}{\ignorespaces Distribution du dataset local tchadien (287 images)}}{34}{table.caption.52}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

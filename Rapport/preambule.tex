@@ -80,6 +80,7 @@
 
 % ── Sommaire court (lit la TdM sans la réinitialiser) ────────────
 \usepackage{shorttoc}
+\renewcommand{\chaptername}{Chapitre}
 
 % ── Abréviations ──────────────────────────────────────────────────
 \usepackage{acronym}
@@ -124,23 +125,4 @@ hyperref=true,defernumbers=false]{biblatex}
 \numberwithin{table}{chapter}
 \numberwithin{equation}{chapter}
 
-% ── CHAPITRES EN MAJUSCULES, SEULS AU CENTRE D'UNE PAGE (règle 1) ─
-\usepackage{titlesec}
-% Le titre du chapitre : taille 14, MAJUSCULES, centré sur page vierge
-\titleformat{\chapter}[display]
-{\normalfont\centering}
-{\fontsize{14}{18}\selectfont\bfseries\MakeUppercase{\chaptertitlename}~\thechapter}
-{12pt}
-{\fontsize{14}{18}\selectfont\bfseries\MakeUppercase}
-\titlespacing*{\chapter}{0pt}{0.32\textheight}{20pt}
 
-% Commande : titre du chapitre SEUL au centre d'une page vierge
-% (règle 1 du guide) — le contenu commence à la page suivante.
-% Usage : \pagechapitre{chap:label}{Titre du chapitre}
-\newcommand{\pagechapitre}[2]{%
-	\clearpage
-	\chapter{#2}\label{#1}%
-	\thispagestyle{empty}%
-	\vspace*{\fill}%
-	\clearpage
-}
