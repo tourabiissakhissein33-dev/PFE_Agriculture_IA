@@ -2379,7 +2379,17 @@
     <bcf:citekey order="12" intorder="1">mohanty2016deep</bcf:citekey>
     <bcf:citekey order="13" intorder="1">sandler2018mobilenetv2</bcf:citekey>
     <bcf:citekey order="14" intorder="1">sqlite2024</bcf:citekey>
-    <bcf:citekey order="15" intorder="1">agroiatchad2026</bcf:citekey>
+    <bcf:citekey order="15" intorder="1">stackhouse2019nasa</bcf:citekey>
+    <bcf:citekey order="16" intorder="1">breiman2001random</bcf:citekey>
+    <bcf:citekey order="17" intorder="1">chen2016xgboost</bcf:citekey>
+    <bcf:citekey order="18" intorder="1">sandler2018mobilenetv2</bcf:citekey>
+    <bcf:citekey order="19" intorder="1">tensorflow2023</bcf:citekey>
+    <bcf:citekey order="20" intorder="1">sentinel2esa</bcf:citekey>
+    <bcf:citekey order="21" intorder="1">streamlit2024</bcf:citekey>
+    <bcf:citekey order="22" intorder="1">zippenfenig2023openmeteo</bcf:citekey>
+    <bcf:citekey order="23" intorder="1">mohanty2016deep</bcf:citekey>
+    <bcf:citekey order="24" intorder="1">agroiatchad2026</bcf:citekey>
+    <bcf:citekey order="25" intorder="1">agroiatchad2026</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">

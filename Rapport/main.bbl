@@ -37,8 +37,8 @@
       \field{labeltitlesource}{title}
       \field{title}{Tchad -- Vue d'ensemble et données agricoles}
       \field{urlday}{15}
-      \field{urlmonth}{11}
-      \field{urlyear}{2025}
+      \field{urlmonth}{5}
+      \field{urlyear}{2026}
       \field{year}{2023}
       \field{urldateera}{ce}
       \verb{urlraw}
@@ -140,9 +140,9 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{{NASA POWER}: Prediction Of Worldwide Energy Resources -- Agroclimatology Methodology}
-      \field{urlday}{15}
-      \field{urlmonth}{11}
-      \field{urlyear}{2025}
+      \field{urlday}{25}
+      \field{urlmonth}{5}
+      \field{urlyear}{2026}
       \field{year}{2019}
       \field{urldateera}{ce}
       \verb{urlraw}
@@ -171,9 +171,9 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Open-Meteo.com Weather {API}}
-      \field{urlday}{15}
-      \field{urlmonth}{11}
-      \field{urlyear}{2025}
+      \field{urlday}{10}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
       \field{year}{2023}
       \field{urldateera}{ce}
       \verb{doi}
@@ -247,8 +247,8 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Sentinel-2 User Handbook}
-      \field{urlday}{15}
-      \field{urlmonth}{11}
+      \field{urlday}{18}
+      \field{urlmonth}{5}
       \field{urlyear}{2025}
       \field{year}{2015}
       \field{urldateera}{ce}
@@ -451,8 +451,8 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{{SQLite}: Small. Fast. Reliable. Choose any three.}
-      \field{urlday}{15}
-      \field{urlmonth}{11}
+      \field{urlday}{20}
+      \field{urlmonth}{6}
       \field{urlyear}{2025}
       \field{year}{2024}
       \field{urldateera}{ce}
@@ -480,8 +480,8 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{{TensorFlow Lite}: Deploy machine learning models on mobile and edge devices}
-      \field{urlday}{15}
-      \field{urlmonth}{11}
+      \field{urlday}{5}
+      \field{urlmonth}{6}
       \field{urlyear}{2025}
       \field{year}{2023}
       \field{urldateera}{ce}
@@ -510,7 +510,7 @@
       \field{labeltitlesource}{title}
       \field{title}{Streamlit: A faster way to build and share data apps}
       \field{urlday}{15}
-      \field{urlmonth}{11}
+      \field{urlmonth}{6}
       \field{urlyear}{2025}
       \field{year}{2024}
       \field{urldateera}{ce}
@@ -541,16 +541,16 @@
       \field{labeltitlesource}{title}
       \field{note}{Application en ligne : agro-ia-tchad.streamlit.app}
       \field{title}{Agro-IA Tchad -- Application web et code source}
-      \field{urlday}{10}
-      \field{urlmonth}{1}
+      \field{urlday}{1}
+      \field{urlmonth}{7}
       \field{urlyear}{2026}
       \field{year}{2026}
       \field{urldateera}{ce}
       \verb{urlraw}
-      \verb https://github.com/tourabiissakhissein33-dev/PFE\_Agriculture\_IA
+      \verb https://github.com/tourabiissakhissein33-dev/PFE_Agriculture_IA
       \endverb
       \verb{url}
-      \verb https://github.com/tourabiissakhissein33-dev/PFE%5C_Agriculture%5C_IA
+      \verb https://github.com/tourabiissakhissein33-dev/PFE_Agriculture_IA
       \endverb
     \endentry
   \enddatalist

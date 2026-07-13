@@ -31,11 +31,14 @@
 	\input{pages/resume}
 	\newpage
 	
-	% 5) Sommaire (chapitres seulement)
-	\chapter*{Sommaire}
-	\addcontentsline{toc}{chapter}{}
+	% 5) Sommaire (chapitres seulement) — via shorttoc, qui lit la
+	%    table SANS la réinitialiser (indispensable car la table des
+	%    matières complète est relue en fin de document)
+	\clearpage
+	\phantomsection
+	\addcontentsline{toc}{chapter}{Sommaire}
 	\markboth{Sommaire}{Sommaire}
-	{\setcounter{tocdepth}{0}\tableofcontents}
+	\shorttoc{Sommaire}{0}
 	\newpage
 	
 	% 6) Liste des figures
@@ -68,10 +71,10 @@
 	\input{chapitres/chapitre2}
 	
 	% CHAPITRE 3 — Implémentation et Développement
-	%\input{chapitres/chapitre3}
+	\input{chapitres/chapitre3}
 	
 	% CHAPITRE 4 — Tests et Résultats
-	%\input{chapitres/chapitre4}
+	\input{chapitres/chapitre4}
 	
 	% Conclusion générale et Perspectives
 	\input{chapitres/conclusion}
@@ -86,10 +89,13 @@
 	\input{annexes/annexes}
 	\newpage
 	
-	% Table des matières complète (en dernier)
+	% Table des matières complète (en dernier) — \tableofcontents
+	% crée lui-même son titre ; pas de \chapter* supplémentaire.
+	\clearpage
 	\setcounter{tocdepth}{3}
-	\chapter*{Table des Matières}
-	\markboth{Table des Matières}{Table des Matières}
+	\phantomsection
+	\addcontentsline{toc}{chapter}{Table des matières}
+	\markboth{Table des matières}{Table des matières}
 	\tableofcontents
 	
 \end{document}
